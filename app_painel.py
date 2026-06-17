@@ -8,180 +8,173 @@ from google import genai
 from fpdf import FPDF
 from groq import Groq
 
-# Configuração da Página do Aplicativo (Visual do Celular)
-st.set_page_config(page_title="Império Cibernético v6.0", page_icon="⚡", layout="centered")
+# ==============================================================================
+# 1) ESTILIZAÇÃO MODO ESCURO / CYBERPUNK (PILAR 1)
+# ==============================================================================
+st.set_page_config(page_title="Império Cibernético v7.0", page_icon="⚡", layout="centered")
 
-st.title("⚡ Máquina Viva v6.0: Energia Generativa Infinita")
-st.write("Sistema auto-sustentável com revezamento de chaves e salvamento automático de credenciais.")
+st.markdown("""
+    <style>
+    .stApp { background-color: #0d0e15; color: #00ff66; }
+    h1, h2, h3 { color: #8a2be2 !important; text-shadow: 0 0 10px #8a2be2; }
+    .stButton>button { background-color: #8a2be2; color: #00ff66; border: 2px solid #00ff66; box-shadow: 0 0 15px #8a2be2; }
+    .stButton>button:hover { background-color: #00ff66; color: #0d0e15; box-shadow: 0 0 20px #00ff66; }
+    .stTextInput>div>div>input, .stTextArea>div>div>textarea { background-color: #1a1c29 !important; color: #00ff66 !important; border: 1px solid #8a2be2 !important; }
+    sidebar .sidebar-content { background-color: #12131c !important; }
+    </style>
+    """, unsafe_allow_html=True)
 
-# Arquivo local de banco de dados
+st.title("⚡ IMPÉRIO CIBERNÉTICO V7.0")
+st.write("Central Soberana: Inteligência Evolutiva, Landing Pages Automáticas e Automação Residencial.")
+
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
-# ==============================================================================
-# SISTEMA DE MEMÓRIA DE CHAVES DO NAVEGADOR (Para não precisar digitar sempre)
-# ==============================================================================
+# Preservação de estados na memória do navegador
 if "gemini_lista" not in st.session_state: st.session_state.gemini_lista = ""
 if "groq_lista" not in st.session_state: st.session_state.groq_lista = ""
-if "heygen_s" not in st.session_state: st.session_state.heygen_s = ""
-if "eleven_s" not in st.session_state: st.session_state.eleven_s = ""
 
 # ==============================================================================
-# PAINEL DE CREDENCIAIS AVANÇADO (MESA DE REVEZAMENTO)
+# PAINEL LATERAL DE CREDENCIAIS
 # ==============================================================================
-st.sidebar.header("🔑 Banco de Energia (Chaves de API)")
-st.sidebar.write("Adicione várias chaves separadas por vírgula para o revezamento infinito.")
-
-input_gemini = st.sidebar.text_area("Lista de Gemini API Keys", value=st.session_state.gemini_lista, help="Cole suas chaves separadas por vírgula")
+st.sidebar.header("🔑 Banco de Energia (Chaves)")
+input_gemini = st.sidebar.text_area("Lista de Gemini API Keys", value=st.session_state.gemini_lista)
 input_groq = st.sidebar.text_area("Lista de Groq API Keys", value=st.session_state.groq_lista)
-input_heygen = st.sidebar.text_input("HeyGen API Key", value=st.session_state.heygen_s, type="password")
-input_eleven = st.sidebar.text_input("ElevenLabs API Key", value=st.session_state.eleven_s, type="password")
 
-# Salva o que foi digitado na memória da sessão atual
 st.session_state.gemini_lista = input_gemini
 st.session_state.groq_lista = input_groq
-st.session_state.heygen_s = input_heygen
-st.session_state.eleven_s = input_eleven
 
-# Transforma o texto das caixas em listas reais de chaves limpas
 lista_gemini = [k.strip() for k in input_gemini.split(",") if k.strip()]
 lista_groq = [k.strip() for k in input_groq.split(",") if k.strip()]
 
-# Exibe o status do banco de energia
-st.sidebar.markdown("---")
-st.sidebar.subheader("🔋 Status dos Motores")
-st.sidebar.write(f"• Motores Gemini Ativos: {len(lista_gemini)}")
-st.sidebar.write(f"• Motores Groq Ativos: {len(lista_groq)}")
-
 # ==============================================================================
-# FUNÇÕES ESTRUTURAIS (PDF E SALVAMENTO)
+# NAVEGAÇÃO ENTRE MÓDULOS (Abas do Aplicativo)
 # ==============================================================================
-def criar_pdf_comercial(titulo, conteudo):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Helvetica", "B", 16)
-    pdf.cell(0, 10, f"PATENTE CONCEITUAL: {titulo}", ln=True, align="C")
-    pdf.ln(10)
-    pdf.set_font("Helvetica", "", 12)
-    pdf.multi_cell(0, 10, txt=conteudo.encode('utf-8', 'ignore').decode('utf-8'))
-    return pdf.output()
+aba_gerador, aba_vendas, aba_fisica = st.tabs(["🧠 Laboratório Generativo", "🏪 Máquina de Vendas (Landing Page)", "🔌 Engenharia Maker Física"])
 
-def salvar_na_planilha(produto, detalhes):
-    data_atual = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    nova_linha = pd.DataFrame([{"Data/Hora": data_atual, "Invenção": produto, "Projeto de Engenharia": detalhes}])
-    if os.path.exists(ARQUIVO_BANCO):
-        try:
-            df_ex = pd.read_csv(ARQUIVO_BANCO)
-            if "Produto Identificado" in df_ex.columns: df_ex = df_ex.rename(columns={"Produto Identificado": "Invenção"})
-            if "Relatório Completo de Engenharia" in df_ex.columns: df_ex = df_ex.rename(columns={"Relatório Completo de Engenharia": "Projeto de Engenharia"})
-            df_final = pd.concat([df_ex, nova_linha], ignore_index=True)
-        except: df_final = nova_linha
-    else:
-        df_final = nova_linha
-    df_final.to_csv(ARQUIVO_BANCO, index=False)
-    return df_final
+# ------------------------------------------------------------------------------
+# ABA 1: LABORATÓRIO GENERATIVO (Loop Infinito Evolutivo)
+# ------------------------------------------------------------------------------
+with aba_gerador:
+    st.subheader("⚙️ Loop Generativo Quântico")
+    modo_infinito = st.toggle("🔄 ATIVAR OPERAÇÃO INTELIGENTE GENERATIVA INFINITA")
 
-# ==============================================================================
-# MOTOR REVOLUCIONÁRIO DE REVEZAMENTO AUTOMÁTICO INDEPENDENTE
-# ==============================================================================
-st.subheader("⚙️ Configuração do Loop Generativo")
-modo_infinito = st.toggle("🔄 ATIVAR OPERAÇÃO INTELIGENTE GENERATIVA INFINITA")
-
-if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True) or modo_infinito:
-    if not lista_gemini and not lista_groq:
-        st.error("❌ ERRO CRÍTICO: Insira pelo menos uma chave de IA válida no menu lateral.")
-    else:
-        execucoes = 0
-        idx_gemini = 0
-        idx_groq = 0
-        
-        while True:
-            execucoes += 1
-            texto_completo = ""
-            nome_produto = "Dispositivo Desconhecido"
+    if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True) or modo_infinito:
+        if not lista_gemini and not lista_groq:
+            st.error("❌ Erro: Insira pelo menos uma chave de IA válida na barra lateral.")
+        else:
+            execucoes = 0
+            idx_gemini = 0
+            idx_groq = 0
             
-            # Captura a memória histórica de dados
-            historico_total = "Nenhuma invenção criada ainda."
-            if os.path.exists(ARQUIVO_BANCO):
-                try:
-                    df_h = pd.read_csv(ARQUIVO_BANCO)
-                    if not df_h.empty:
-                        col = "Invenção" if "Invenção" in df_h.columns else "Produto Identificado"
-                        historico_total = ", ".join(df_h[col].astype(str).tolist())
-                except: pass
-
-            prompt_sistema = f"""
-            Tempo cibernético: {time.time()}
-            Histórico de tecnologia criada: [{historico_total}]
-            Projete um NOVO dispositivo ou motor focado em ENERGIA AUTOSSUSTENTÁVEL, CIBERNÉTICA ou CAPTAÇÃO LIVRE.
-            Adicione melhorias sem retroceder. Na PRIMEIRA LINHA responda apenas: 'NOME: [Nome da Invenção]'.
-            """
-
-            # TENTATIVA 1: REVEZAMENTO GOOGLE GEMINI
-            if lista_gemini:
-                chave_atual_gemini = lista_gemini[idx_gemini % len(lista_gemini)]
-                with st.spinner(f"🧠 [Ciclo {execucoes}] Usando Chave Gemini #{idx_gemini % len(lista_gemini) + 1}..."):
-                    try:
-                        client = genai.Client(api_key=chave_atual_gemini)
-                        response = client.models.generate_content(model='gemini-2.5-flash', contents=prompt_sistema)
-                        texto_completo = response.text
-                    except Exception as e:
-                        st.warning(f"Chave Gemini #{idx_gemini % len(lista_gemini) + 1} esgotada. Rotacionando...")
-                        idx_gemini += 1 # Pula para a próxima chave de IA automaticamente se der erro 429
-            
-            # TENTATIVA 2: REDUNDÂNCIA REVEZAMENTO GROQ
-            if not texto_completo and lista_groq:
-                chave_atual_groq = lista_groq[idx_groq % len(lista_groq)]
-                with st.spinner(f"⚠️ Revezamento Groq: Usando Chave #{idx_groq % len(lista_groq) + 1}..."):
-                    try:
-                        client_groq = Groq(api_key=chave_atual_groq)
-                        chat_completion = client_groq.chat.completions.create(
-                            messages=[{"role": "user", "content": prompt_sistema}],
-                            model="llama-3.1-8b-instant",
-                        )
-                        texto_completo = chat_completion.choices.message.content
-                    except:
-                        st.warning(f"Chave Groq #{idx_groq % len(lista_groq) + 1} esgotada. Rotacionando...")
-                        idx_groq += 1
-
-            if texto_completo:
-                if "NOME:" in texto_completo:
-                    for linha in texto_completo.split("\n"):
-                        if linha.startswith("NOME:"):
-                            nome_produto = linha.replace("NOME:", "").strip()
-                            break
+            while True:
+                execucoes += 1
+                texto_completo = ""
+                nome_produto = "Dispositivo Desconhecido"
                 
-                salvar_na_planilha(nome_produto, texto_completo)
-                st.success(f"🔥 Invenção '{nome_produto}' integrada à árvore tecnológica!")
-                st.write(texto_completo)
-            else:
-                st.error("❌ Todas as chaves adicionadas no menu de revezamento estão esgotadas por hoje. Adicione mais chaves.")
-                break
+                historico_total = "Nenhuma invenção criada ainda."
+                if os.path.exists(ARQUIVO_BANCO):
+                    try:
+                        df_h = pd.read_csv(ARQUIVO_BANCO)
+                        if not df_h.empty:
+                            col = "Invenção" if "Invenção" in df_h.columns else "Produto Identificado"
+                            historico_total = ", ".join(df_h[col].astype(str).tolist())
+                    except: pass
 
-            if not modo_infinito: break
-            time.sleep(15)
-            st.rerun()
+                prompt_sistema = f"Tempo: {time.time()}. Histórico: [{historico_total}]. Projete um NOVO dispositivo focado em ENERGIA AUTOSSUSTENTÁVEL ou CIBERNÉTICA. Na PRIMEIRA LINHA responda apenas: 'NOME: [Nome da Invenção]'."
 
-# ==============================================================================
-# PAINEL DE EXPORTAÇÃO COMERCIAL E BANCO DE DADOS
-# ==============================================================================
-st.markdown("---")
-st.subheader("📋 Banco de Dados de Patentes Cumulativas")
-if os.path.exists(ARQUIVO_BANCO):
-    try:
-        df_visualizacao = pd.read_csv(ARQUIVO_BANCO)
-        if "Produto Identificado" in df_visualizacao.columns: df_visualizacao = df_visualizacao.rename(columns={"Produto Identificado": "Invenção"})
-        if "Relatório Completo de Engenharia" in df_visualizacao.columns: df_visualizacao = df_visualizacao.rename(columns={"Relatório Completo de Engenharia": "Projeto de Engenharia"})
+                if lista_gemini:
+                    with st.spinner(f"🧠 [Ciclo {execucoes}] Processando via Google..."):
+                        try:
+                            client = genai.Client(api_key=lista_gemini[idx_gemini % len(lista_gemini)])
+                            texto_completo = client.models.generate_content(model='gemini-2.5-flash', contents=prompt_sistema).text
+                        except:
+                            idx_gemini += 1
+                
+                if not texto_completo and lista_groq:
+                    with st.spinner(f"⚠️ Redundância: Processando via Groq..."):
+                        try:
+                            client_groq = Groq(api_key=lista_groq[idx_groq % len(lista_groq)])
+                            texto_completo = client_groq.chat.completions.create(messages=[{"role": "user", "content": prompt_sistema}], model="llama-3.1-8b-instant").choices.message.content
+                        except:
+                            idx_groq += 1
+
+                if texto_completo:
+                    if "NOME:" in texto_completo:
+                        for linha in texto_completo.split("\n"):
+                            if linha.startswith("NOME:"):
+                                nome_produto = linha.replace("NOME:", "").strip()
+                                break
+                    
+                    # Salva na planilha de dados
+                    data_atual = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                    nova_linha = pd.DataFrame([{"Data/Hora": data_atual, "Invenção": nome_produto, "Projeto de Engenharia": texto_completo}])
+                    if os.path.exists(ARQUIVO_BANCO):
+                        try: df_final = pd.concat([pd.read_csv(ARQUIVO_BANCO), nova_linha], ignore_index=True)
+                        except: df_final = nova_linha
+                    else: df_final = nova_linha
+                    df_final.to_csv(ARQUIVO_BANCO, index=False)
+                    
+                    st.success(f"🔥 Invenção '{nome_produto}' integrada com sucesso!")
+                    st.write(texto_completo)
+                else:
+                    st.error("Todas as chaves esgotadas.")
+                    break
+
+                if not modo_infinito: break
+                time.sleep(15)
+                st.rerun()
+
+# ------------------------------------------------------------------------------
+# ABA 2: MÁQUINA DE VENDAS (FÁBRICA DE LANDING PAGES - PILAR 2)
+# ------------------------------------------------------------------------------
+with aba_vendas:
+    st.subheader("🏪 Estrutura Comercial Automática")
+    if os.path.exists(ARQUIVO_BANCO):
+        df_v = pd.read_csv(ARQUIVO_BANCO)
+        if not df_v.empty:
+            ultima_inv = df_v.iloc[-1]
+            nome_inv = str(ultima_inv.get("Invenção", "AetherFlux Generator"))
+            detalhes_inv = str(ultima_inv.get("Projeto de Engenharia", ""))
+            
+            st.write(f"Gerando Página de Alta Conversão para: **{nome_inv}**")
+            
+            # Código visual simulado da Landing Page pronto para exibição
+            st.markdown(f"""
+            <div style="background-color: #1a1c29; padding: 25px; border-radius: 10px; border: 2px solid #00ff66; text-align: center;">
+                <h1 style="color: #00ff66 !important;">{nome_inv.upper()}</h1>
+                <p style="color: #ffffff; font-size: 18px;">A Revolução Definitiva em Energia Livre e Autossustentável</p>
+                <div style="background-color: #0d0e15; padding: 15px; border-radius: 5px; color: #8a2be2; margin: 15px 0; font-weight: bold;">
+                    ⚡ GARANTA SUA INDEPENDÊNCIA ENERGÉTICA AGORA!
+                </div>
+                <button style="width: 100%; padding: 12px; background-color: #00ff66; border: none; font-weight: bold; border-radius: 5px; color: #0d0e15;">
+                    ADQUIRIR PROJETO TÉCNICO COMPLETO (PDF)
+                </button>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.info("Execute uma operação laboratorial primeiro para coletar os produtos de venda.")
+    else:
+        st.info("Aguardando geração de dados na planilha.")
+
+# ------------------------------------------------------------------------------
+# ABA 3: ENGENHARIA MAKER FÍSICA (PLANO DA CASA AUTOMÁTICA - PILAR 3)
+# ------------------------------------------------------------------------------
+with aba_fisica:
+    st.subheader("🔌 Central de Comando Residencial Remoto (Simulador)")
+    st.write("Mapeamento lógico para integrar o seu celular a interruptores físicos reais (Sonoff/Arduino).")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        lampada = st.toggle("💡 Lâmpada do Laboratório Quântico")
+        if lampada: st.success("🟢 Comando Enviado: Lâmpada LIGADA remotamente via Nuvem!")
+        else: st.info("🔴 Status: Lâmpada DESLIGADA")
         
-        st.metric(label="Patentes Salvas na Memória", value=len(df_visualizacao))
-        st.dataframe(df_visualizacao)
-        
-        if not df_visualizacao.empty:
-            ultima_inv = df_visualizacao.iloc[-1]
-            pdf_bytes = criar_pdf_comercial(str(ultima_inv["Invenção"]), str(ultima_inv["Projeto de Engenharia"]))
-            st.download_button(label="📄 BAIXAR RELATÓRIO DA ÚLTIMA INVENÇÃO EM PDF", data=pdf_bytes, file_name="patente.pdf", mime="application/pdf", use_container_width=True)
-        
-        csv_data = df_visualizacao.to_csv(index=False).encode('utf-8')
-        st.download_button(label="📥 BAIXAR PLANILHA COMPLETA (CSV)", data=csv_data, file_name="historico_ia_autonoma.csv", mime="text/csv", use_container_width=True)
-    except: pass
-else:
-    st.info("A planilha está vazia. Inicie a operação para colher os primeiros relatórios!")
+    with col2:
+        rele_motor = st.toggle("⚡ Alimentação Principal do Gerador")
+        if rele_motor: st.success("🟢 Relé de Alta Potência: ATIVADO!")
+        else: st.info("🔴 Status: Relé em Repouso")
+
+    st.markdown("---")
+    st.write("🛒 **Lista de Componentes Recomendados para Iniciar Prática Física:**")
+    st.markdown("*   **[Módulo Interruptor Inteligente Sonoff MINI](https://google.com)** - Para embutir na parede e controlar luzes.")
+    st.markdown("*   **[Tomada Inteligente Wi-Fi Tuya](https://google.com)** - Para controlar qualquer aparelho de tomada de forma remota.")
