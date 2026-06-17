@@ -9,9 +9,9 @@ from fpdf import FPDF
 from groq import Groq
 
 # Configuração da Página do Aplicativo (Visual do Celular)
-st.set_page_config(page_title="Cibernética Autônoma v5.5", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Cibernética Autônoma v5.6", page_icon="⚡", layout="centered")
 
-st.title("⚡ Império Cibernético Autônomo v5.5")
+st.title("⚡ Império Cibernético Autônomo v5.6")
 st.write("Geração infinita de Energia Autossustentável e Cibernética com exportação comercial em PDF.")
 
 # Arquivo local de banco de dados
@@ -51,8 +51,10 @@ def enviar_aviso_celular(token, chat_id, mensagem):
     if token and chat_id:
         url = f"https://telegram.org{token}/sendMessage"
         payload = {"chat_id": chat_id, "text": mensagem}
-        try: requests.post(url, json=payload)
-        except: pass
+        try:
+            requests.post(url, json=payload)
+        except:
+            pass
 
 # ==============================================================================
 # FUNÇÃO PARA SALVAR AUTOMATICAMENTE NA PLANILHA
@@ -102,7 +104,8 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True) or m
                     if not df_historico.empty:
                         coluna_busca = "Invenção" if "Invenção" in df_historico.columns else "Produto Identificado"
                         historico_total = ", ".join(df_historico[coluna_busca].astype(str).tolist())
-                except: pass
+                except:
+                    pass
 
             prompt_sistema = f"""
             Instante do tempo: {time.time()}
@@ -169,37 +172,38 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True) or m
             st.rerun()
 
 # ==============================================================================
-# PAINEL DE EXPORTAÇÃO COMERCIAL E BANCO DE DADOS
+# PAINEL DE EXPORTAÇÃO COMERCIAL E BANCO DE DADOS (BLINDADO E SEM ELSES VAZIOS)
 # ==============================================================================
 st.markdown("---")
 st.subheader("📋 Banco de Dados de Patentes Cumulativas")
+
 if os.path.exists(ARQUIVO_BANCO):
-    try:
-        df_visualizacao = pd.read_csv(ARQUIVO_BANCO)
-        if "Produto Identificado" in df_visualizacao.columns:
-            df_visualizacao = df_visualizacao.rename(columns={"Produto Identificado": "Invenção"})
-        if "Relatório Completo de Engenharia" in df_visualizacao.columns:
-            df_visualizacao = df_visualizacao.rename(columns={"Relatório Completo de Engenharia": "Projeto de Engenharia"})
+    df_visualizacao = pd.read_csv(ARQUIVO_BANCO)
+    if "Produto Identificado" in df_visualizacao.columns:
+        df_visualizacao = df_visualizacao.rename(columns={"Produto Identificado": "Invenção"})
+    if "Relatório Completo de Engenharia" in df_visualizacao.columns:
+        df_visualizacao = df_visualizacao.rename(columns={"Relatório Completo de Engenharia": "Projeto de Engenharia"})
+    
+    st.metric(label="Patentes Salvas na Memória", value=len(df_visualizacao))
+    st.dataframe(df_visualizacao)
+    
+    if not df_visualizacao.empty:
+        ultima_inv = df_visualizacao.iloc[-1]
+        nome_pdf = str(ultima_inv["Invenção"])
+        conteudo_pdf = str(ultima_inv["Projeto de Engenharia"])
         
-        st.metric(label="Patentes Salvas na Memória", value=len(df_visualizacao))
-        st.dataframe(df_visualizacao)
-        
-        if not df_visualizacao.empty:
-            ultima_inv = df_visualizacao.iloc[-1]
-            nome_pdf = str(ultima_inv["Invenção"])
-            conteudo_pdf = str(ultima_inv["Projeto de Engenharia"])
-            
-            pdf_bytes = criar_pdf_comercial(nome_pdf, conteudo_pdf)
-            st.download_button(
-                label="📄 BAIXAR RELATÓRIO DA ÚLTIMA INVENÇÃO EM PDF COMERCIAL",
-                data=pdf_bytes,
-                file_name=f"patente_{nome_pdf.lower().replace(' ', '_')}.pdf",
-                mime="application/pdf",
-                use_container_width=True
-            )
-        
-        csv_data = df_visualizacao.to_csv(index=False).encode('utf-8')
-        st.download_button(label="📥 BAIXAR PLANILHA COMPLETA (CSV)", data=csv_data, file_name="historico_ia_autonoma.csv", mime="text/csv", use_container_width=True)
-    except:
-        st.info("Inicie a primeira operação para sincronizar os dados.")
-else:
+        pdf_bytes = criar_pdf_comercial(nome_pdf, conteudo_pdf)
+        st.download_button(
+            label="📄 BAIXAR RELATÓRIO DA ÚLTIMA INVENÇÃO EM PDF COMERCIAL",
+            data=pdf_bytes,
+            file_name=f"patente_{nome_pdf.lower().replace(' ', '_')}.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
+    
+    csv_data = df_visualizacao.to_csv(index=False).encode('utf-8')
+    st.download_button(label="📥 BAIXAR PLANILHA COMPLETA (CSV)", data=csv_data, file_name="historico_ia_autonoma.csv", mime="text/csv", use_container_width=True)
+
+if not os.path.exists(ARQUIVO_BANCO):
+    st.info("A planilha está vazia. Inicie a operação para colher os primeiros relatórios!")
+
