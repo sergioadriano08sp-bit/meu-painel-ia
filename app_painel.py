@@ -6,19 +6,19 @@ import time
 from datetime import datetime
 from google import genai
 from fpdf import FPDF
-from langchain_groq import ChatGroq
+from groq import Groq
 
 # Configuração da Página do Aplicativo (Visual do Celular)
-st.set_page_config(page_title="Cibernética Autônoma v5.1", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Cibernética Autônoma v5.3", page_icon="⚡", layout="centered")
 
-st.title("⚡ Império Cibernético Autônomo v5.1")
+st.title("⚡ Império Cibernético Autônomo v5.3")
 st.write("Geração infinita de Energia Autossustentável e Cibernética com exportação comercial em PDF.")
 
 # Arquivo local de banco de dados
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
 # ==============================================================================
-# PAINEL DE CREDENCIAIS COMPLETO (TODAS AS CHAVES RESTAURADAS)
+# PAINEL DE CREDENCIAIS COMPLETO
 # ==============================================================================
 st.sidebar.header("🔑 Chaves de Ativação")
 gemini_key = st.sidebar.text_input("1) Gemini API Key (Principal Grátis)", type="password")
@@ -50,12 +50,12 @@ def criar_pdf_comercial(titulo, conteudo):
 def enviar_aviso_celular(token, chat_id, mensagem):
     if token and chat_id:
         url = f"https://telegram.org{token}/sendMessage"
-        payload = {"chat_id": chat_id, "text": message}
+        payload = {"chat_id": chat_id, "text": mensagem}
         try: requests.post(url, json=payload)
         except: pass
 
 # ==============================================================================
-# FUNÇÃO PARA SALVAR AUTOMATICAMENTE NA PLANILHA (BLINDADA CONTRA ERROS DE NOME)
+# FUNÇÃO PARA SALVAR AUTOMATICAMENTE NA PLANILHA
 # ==============================================================================
 def salvar_na_planilha(produto, detalhes):
     data_atual = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -67,7 +67,6 @@ def salvar_na_planilha(produto, detalhes):
     if os.path.exists(ARQUIVO_BANCO):
         try:
             df_existente = pd.read_csv(ARQUIVO_BANCO)
-            # Padroniza nomes antigos de colunas para evitar o erro do Pandas
             if "Produto Identificado" in df_existente.columns:
                 df_existente = df_existente.rename(columns={"Produto Identificado": "Invenção"})
             if "Relatório Completo de Engenharia" in df_existente.columns:
@@ -96,7 +95,6 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True) or m
             texto_completo = ""
             nome_produto = "Dispositivo Desconhecido"
             
-            # MEMÓRIA HISTÓRICA CUMULATIVA COMPATÍVEL
             historico_total = "Nenhuma invenção criada ainda."
             if os.path.exists(ARQUIVO_BANCO):
                 try:
@@ -118,11 +116,12 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True) or m
             1. Nome do Dispositivo.
             2. Debate científico da equipe de gênios.
             3. 5 Melhorias brutais de física e mecânica aplicadas.
-            4. Roteiro curto de vendas comerciais (Atfe 200 letras).
+            4. Roteiro curto de vendas comerciais (Até 200 letras).
             
             Na PRIMEIRA LINHA da resposta, escreva APENAS: 'NOME: [Nome da Invenção]'.
             """
 
+            # TENTATIVA 1: RODA NO GEMINI
             try:
                 if gemini_key:
                     with st.spinner(f"🧠 [Ciclo {execucoes}] Cérebro Google processando alta engenharia..."):
@@ -130,14 +129,23 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True) or m
                         response = client.models.generate_content(model='gemini-2.5-flash', contents=prompt_sistema)
                         texto_completo = response.text
                 else:
-                    raise Exception("Acessando redundância")
+                    raise Exception("Acessando redundância da Groq")
             except:
+                # TENTATIVA 2: SE O GEMINI FALHAR, ACIONA O CLIENTE DIRETO E OFICIAL DA GROQ (INFALÍVEL)
                 if groq_key:
-                    with st.spinner(f"⚠️ Redundância: Cérebro Groq processando evolução..."):
-                        llm_resva = ChatGroq(groq_api_key=groq_key, model_name="llama3-8b-8192")
-                        texto_completo = llm_resva.invoke(prompt_sistema).content
+                    with st.spinner(f"⚠️ Redundância: Cérebro Groq Oficial processando evolução..."):
+                        try:
+                            client_groq = Groq(api_key=groq_key)
+                            chat_completion = client_groq.chat.completions.create(
+                                messages=[{"role": "user", "content": prompt_sistema}],
+                                model="llama3-8b-8192",
+                            )
+                            texto_completo = chat_completion.choices[0].message.content
+                        except Exception as erro_interno_groq:
+                            st.error(f"Falha na API da Groq: {erro_interno_groq}")
+                            break
                 else:
-                    st.error("Sem chaves disponíveis. Insira a chave da Groq ou aguarde o reset do Gemini.")
+                    st.error("Sem chaves disponíveis para execução. Insira a sua Groq API Key ativa.")
                     break
 
             if texto_completo:
@@ -161,15 +169,13 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True) or m
             st.rerun()
 
 # ==============================================================================
-# PAINEL DE EXPORTAÇÃO COMERCIAL E BANCO DE DADOS (BLINDADO CONTRA KEYERROR)
+# PAINEL DE EXPORTAÇÃO COMERCIAL E BANCO DE DADOS
 # ==============================================================================
 st.markdown("---")
 st.subheader("📋 Banco de Dados de Patentes Cumulativas")
 if os.path.exists(ARQUIVO_BANCO):
     try:
         df_visualizacao = pd.read_csv(ARQUIVO_BANCO)
-        
-        # Converte as colunas automaticamente caso sejam do histórico de ontem
         if "Produto Identificado" in df_visualizacao.columns:
             df_visualizacao = df_visualizacao.rename(columns={"Produto Identificado": "Invenção"})
         if "Relatório Completo de Engenharia" in df_visualizacao.columns:
@@ -178,7 +184,6 @@ if os.path.exists(ARQUIVO_BANCO):
         st.metric(label="Patentes Salvas na Memória", value=len(df_visualizacao))
         st.dataframe(df_visualizacao)
         
-        # GERAÇÃO DO PDF SEGURO
         if not df_visualizacao.empty:
             ultima_inv = df_visualizacao.iloc[-1]
             nome_pdf = str(ultima_inv["Invenção"])
@@ -195,7 +200,4 @@ if os.path.exists(ARQUIVO_BANCO):
         
         csv_data = df_visualizacao.to_csv(index=False).encode('utf-8')
         st.download_button(label="📥 BAIXAR PLANILHA COMPLETA (CSV)", data=csv_data, file_name="historico_ia_autonoma.csv", mime="text/csv", use_container_width=True)
-    except Exception as e_painel:
-        st.info("Inicie a primeira operação para sincronizar a tabela de dados.")
-else:
-    st.info("A planilha está vazia. Inicie a operação para colher os primeiros relatórios!")
+    except:
