@@ -9,9 +9,9 @@ from fpdf import FPDF
 from groq import Groq
 
 # Configuração da Página do Aplicativo (Visual do Celular)
-st.set_page_config(page_title="Cibernética Autônoma v5.3", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Cibernética Autônoma v5.4", page_icon="⚡", layout="centered")
 
-st.title("⚡ Império Cibernético Autônomo v5.3")
+st.title("⚡ Império Cibernético Autônomo v5.4")
 st.write("Geração infinita de Energia Autossustentável e Cibernética com exportação comercial em PDF.")
 
 # Arquivo local de banco de dados
@@ -131,7 +131,7 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True) or m
                 else:
                     raise Exception("Acessando redundância da Groq")
             except:
-                # TENTATIVA 2: SE O GEMINI FALHAR, ACIONA O CLIENTE DIRETO E OFICIAL DA GROQ (INFALÍVEL)
+                # TENTATIVA 2: SE O GEMINI FALHAR, ACIONA O CLIENTE DIRETO E OFICIAL DA GROQ
                 if groq_key:
                     with st.spinner(f"⚠️ Redundância: Cérebro Groq Oficial processando evolução..."):
                         try:
@@ -140,7 +140,7 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True) or m
                                 messages=[{"role": "user", "content": prompt_sistema}],
                                 model="llama3-8b-8192",
                             )
-                            texto_completo = chat_completion.choices[0].message.content
+                            texto_completo = chat_completion.choices.message.content
                         except Exception as erro_interno_groq:
                             st.error(f"Falha na API da Groq: {erro_interno_groq}")
                             break
@@ -201,3 +201,5 @@ if os.path.exists(ARQUIVO_BANCO):
         csv_data = df_visualizacao.to_csv(index=False).encode('utf-8')
         st.download_button(label="📥 BAIXAR PLANILHA COMPLETA (CSV)", data=csv_data, file_name="historico_ia_autonoma.csv", mime="text/csv", use_container_width=True)
     except:
+        st.info("Inicie a primeira operação para sincronizar a tabela de dados.")
+else:
