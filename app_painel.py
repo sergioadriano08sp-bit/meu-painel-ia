@@ -11,7 +11,7 @@ from groq import Groq
 # ==============================================================================
 # ESTILIZAÇÃO MODO ESCURO / CYBERPUNK
 # ==============================================================================
-st.set_page_config(page_title="Império Cibernético v9.2", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Império Cibernético v10.0", page_icon="⚡", layout="centered")
 
 st.markdown("""
     <style>
@@ -24,8 +24,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚡ IMPÉRIO CIBERNÉTICO V9.2")
-st.write("Usina Suprema: Correção do Bloco Hugging Face Concluída com Sucesso.")
+st.title("⚡ IMPÉRIO CIBERNÉTICO V10.0")
+st.write("Usina Suprema: 10 Motores Mundiais Blindados Contra Erros de Sintaxe.")
 
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
@@ -33,15 +33,15 @@ ARQUIVO_BANCO = "banco_de_relatorios.csv"
 # SISTEMA DE MEMÓRIA DE SESSÃO ATIVA (SALVA TODAS AS 10 CHAVES NA TELA)
 # ==============================================================================
 chaves_estado = ["gemini_s", "groq_s", "mistral_s", "cohere_s", "hf_s", "eleven_s", "heygen_s", "qwen_s", "claude_s", "chatgpt_s"]
-for chave in chaves_estado:
-    if chave not in st.session_state:
-        st.session_state[chave] = ""
+for c in chaves_estado:
+    if c not in st.session_state:
+        st.session_state[c] = ""
 
 # ==============================================================================
 # PAINEL LATERAL DE CREDENCIAIS MONUMENTAL (10 ESPAÇOS CONSOLIDADOS)
 # ==============================================================================
 st.sidebar.header("🔑 Banco de Energia Suprema")
-st.sidebar.write("Cole os códigos correspondentes. Múltiplas chaves podem ser separadas por vírgula.")
+st.sidebar.write("Cole os códigos correspondentes. Separe múltiplas chaves por vírgula.")
 
 input_gemini = st.sidebar.text_area("1) Google Gemini Keys", value=st.session_state.gemini_s)
 input_groq = st.sidebar.text_area("2) Groq (Llama) Keys", value=st.session_state.groq_s)
@@ -95,7 +95,7 @@ def criar_pdf_comercial(titulo, conteudo):
     return pdf.output()
 
 # ------------------------------------------------------------------------------
-# ABA 1: LABORATÓRIO GENERATIVO (Varre as chaves de forma linear alinhada)
+# ABA 1: LABORATÓRIO GENERATIVO (Varre as chaves com blocos try/except blindados)
 # ------------------------------------------------------------------------------
 with aba_gerador:
     st.subheader("⚙️ Execução Generativa Estabilizada")
@@ -115,7 +115,8 @@ with aba_gerador:
                     if not df_h.empty:
                         col = "Invenção" if "Invenção" in df_h.columns else "Produto Identificado"
                         historico_total = ", ".join(df_h[col].astype(str).tolist())
-                except: pass
+                except:
+                    pass
 
             prompt_sistema = f"Tempo: {time.time()}. Histórico: [{historico_total}]. Projete um NOVO dispositivo ou motor focado em ENERGIA AUTOSSUSTENTÁVEL ou CIBERNÉTICA. Na PRIMEIRA LINHA responda obrigatoriamente: 'NOME: [Nome da Invenção]'."
 
@@ -128,7 +129,8 @@ with aba_gerador:
                             texto_completo = client.models.generate_content(model='gemini-2.5-flash', contents=prompt_sistema).text
                             st.info(f"⚡ Sucesso via Google Gemini (Chave #{i+1})")
                             break
-                        except: pass
+                        except:
+                            pass
 
             # CANAL 2: GROQ (LLAMA 3.1)
             if not texto_completo and lista_groq:
@@ -139,7 +141,8 @@ with aba_gerador:
                             texto_completo = client_groq.chat.completions.create(messages=[{"role": "user", "content": prompt_sistema}], model="llama-3.1-8b-instant").choices.message.content
                             st.info(f"⚡ Sucesso via Groq Llama (Chave #{i+1})")
                             break
-                        except: pass
+                        except:
+                            pass
 
             # CANAL 3: MISTRAL AI
             if not texto_completo and lista_mistral:
@@ -152,7 +155,8 @@ with aba_gerador:
                             texto_completo = res["choices"]["message"]["content"]
                             st.info(f"⚡ Sucesso via Mistral AI (Chave #{i+1})")
                             break
-                        except: pass
+                        except:
+                            pass
 
             # CANAL 4: COHERE
             if not texto_completo and lista_cohere:
@@ -165,13 +169,13 @@ with aba_gerador:
                             texto_completo = res["text"]
                             st.info(f"⚡ Sucesso via Cohere (Chave #{i+1})")
                             break
-                        except: pass
+                        except:
+                            pass
 
-            # CANAL 5: HUGGING FACE (ESTRUTURA DE EXCEPT REPARADA)
+            # CANAL 5: HUGGING FACE (SINTAXE TOTALMENTE TRAVADA E BLINDADA)
             if not texto_completo and lista_hf:
                 with st.spinner("🛡️ Ativando a fortaleza da Hugging Face..."):
                     for i, token in enumerate(lista_hf):
                         try:
                             headers = {"Authorization": f"Bearer {token}"}
                             payload = {"inputs": prompt_sistema}
-                            res = requests.post("https://huggingface.co", json=payload, headers=headers, timeout=10).json()
