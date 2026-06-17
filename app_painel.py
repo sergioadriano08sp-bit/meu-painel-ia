@@ -9,7 +9,7 @@ from fpdf import FPDF
 from groq import Groq
 
 # Configuração da Página do Aplicativo (Visual do Celular)
-st.set_page_config(page_title="Império Cibernético v10.1", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Império Cibernético v10.2", page_icon="⚡", layout="centered")
 
 # Estilização Cyberpunk
 st.markdown("""
@@ -22,8 +22,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚡ IMPÉRIO CIBERNÉTICO V10.1")
-st.write("Usina Suprema: Arquitetura Plana Blindada Contra Erros de Indentação.")
+st.title("⚡ IMPÉRIO CIBERNÉTICO V10.2")
+st.write("Usina Suprema: Alinhamento de Laços e Blocos Concluído de Forma Blindada.")
 
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
@@ -84,19 +84,21 @@ def criar_pdf_comercial(titulo, conteudo):
     return pdf.output()
 
 # ==============================================================================
-# FUNÇÕES DE EXECUÇÃO ISOLADAS (EVITA DESALINHAMENTO DE REDE)
+# FUNÇÕES DE EXECUÇÃO ISOLADAS (ALINHAMENTO SEGURO ADICIONADO)
 # ==============================================================================
 def chamar_gemini(chave, prompt):
     try:
         client = genai.Client(api_key=chave)
         return client.models.generate_content(model='gemini-2.5-flash', contents=prompt).text
-    except: return ""
+    except:
+        return ""
 
 def chamar_groq(chave, prompt):
     try:
         client_groq = Groq(api_key=chave)
         return client_groq.chat.completions.create(messages=[{"role": "user", "content": prompt}], model="llama-3.1-8b-instant").choices.message.content
-    except: return ""
+    except:
+        return ""
 
 def chamar_mistral(chave, prompt):
     try:
@@ -104,7 +106,8 @@ def chamar_mistral(chave, prompt):
         payload = {"model": "mistral-tiny", "messages": [{"role": "user", "content": prompt}]}
         res = requests.post("https://mistral.ai", json=payload, headers=headers, timeout=10).json()
         return res["choices"]["message"]["content"]
-    except: return ""
+    except:
+        return ""
 
 def chamar_cohere(chave, prompt):
     try:
@@ -112,16 +115,19 @@ def chamar_cohere(chave, prompt):
         payload = {"model": "command-r-plus", "message": prompt}
         res = requests.post("https://cohere.com", json=payload, headers=headers, timeout=10).json()
         return res["text"]
-    except: return ""
+    except:
+        return ""
 
 def chamar_huggingface(token, prompt):
     try:
         headers = {"Authorization": f"Bearer {token}"}
         payload = {"inputs": prompt}
         res = requests.post("https://huggingface.co", json=payload, headers=headers, timeout=10).json()
-        if isinstance(res, list) and len(res) > 0: return res[0].get("generated_text", "")
+        if isinstance(res, list) and len(res) > 0:
+            return res[0].get("generated_text", "")
         return res.get("generated_text", "")
-    except: return ""
+    except:
+        return ""
 
 def chamar_qwen(chave, prompt):
     try:
@@ -129,7 +135,8 @@ def chamar_qwen(chave, prompt):
         payload = {"model": "qwen/qwen-2.5-72b-instruct", "messages": [{"role": "user", "content": prompt}]}
         res = requests.post("https://openrouter.ai", json=payload, headers=headers, timeout=10).json()
         return res["choices"]["message"]["content"]
-    except: return ""
+    except:
+        return ""
 
 def chamar_claude(chave, prompt):
     try:
@@ -137,7 +144,8 @@ def chamar_claude(chave, prompt):
         payload = {"model": "claude-3-haiku-20240307", "max_tokens": 1000, "messages": [{"role": "user", "content": prompt}]}
         res = requests.post("https://anthropic.com", json=payload, headers=headers, timeout=10).json()
         return res["content"]["text"]
-    except: return ""
+    except:
+        return ""
 
 def chamar_chatgpt(chave, prompt):
     try:
@@ -145,16 +153,18 @@ def chamar_chatgpt(chave, prompt):
         payload = {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": prompt}]}
         res = requests.post("https://openai.com", json=payload, headers=headers, timeout=10).json()
         return res["choices"]["message"]["content"]
-    except: return ""
+    except:
+        return ""
 
 # ------------------------------------------------------------------------------
-# ABA 1: EXECUÇÃO DO LABORATÓRIO (FLUXO TOTALMENTE PLANO)
+# ABA 1: EXECUÇÃO DO LABORATÓRIO (FLUXO TOTALMENTE PLANO E CORRIGIDO)
 # ------------------------------------------------------------------------------
 with aba_gerador:
     st.subheader("⚙️ Execução Generativa Estabilizada")
     
     if st.button("🚀 DISPARAR ENXAME CIBERNÉTICO", use_container_width=True):
-        if not any([lista_gemini, lista_groq, lista_mistral, lista_cohere, lista_hf, lista_qwen, lista_claude, lista_chatgpt]):
+        chaves_existentes = any([lista_gemini, lista_groq, lista_mistral, lista_cohere, lista_hf, lista_qwen, lista_claude, lista_chatgpt])
+        if not chaves_existentes:
             st.error("❌ Erro: Insira pelo menos uma chave de inteligência artificial na barra lateral.")
         else:
             texto_completo = ""
@@ -167,11 +177,12 @@ with aba_gerador:
                     if not df_h.empty:
                         col = "Invenção" if "Invenção" in df_h.columns else "Produto Identificado"
                         historico_total = ", ".join(df_h[col].astype(str).tolist())
-                except: pass
+                except:
+                    pass
 
             prompt_sistema = f"Tempo: {time.time()}. Histórico: [{historico_total}]. Projete um NOVO dispositivo ou motor focado em ENERGIA AUTOSSUSTENTÁVEL ou CIBERNÉTICA. Na PRIMEIRA LINHA responda obrigatoriamente: 'NOME: [Nome da Invenção]'."
 
-            # Execução Sequencial Linear Plana - Sem aninhamento de chaves
+            # Execução Sequencial Linear Plana com correções aplicadas
             if not texto_completo and lista_gemini:
                 st.info("🧠 Acionando Motor 1: Google Gemini...")
                 for c in lista_gemini:
@@ -196,6 +207,3 @@ with aba_gerador:
                     texto_completo = chamar_cohere(c, prompt_sistema)
                     if texto_completo: break
 
-            if not texto_completo and lista_hf:
-                st.info("🛡️ Acionando Motor 5: Hugging Face...")
-                for c in lista_hf:
