@@ -24,9 +24,11 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True):
     if not groq_key:
         st.error("❌ ERRO CRÍTICO: Você precisa colocar a sua Groq API Key para ativar o cérebro das IAs.")
     else:
-        # Configuração das Variáveis de Ambiente Diretas da Groq (Padrão mais estável)
+        # Configuração das Variáveis de Ambiente Diretas da Groq
         os.environ["GROQ_API_KEY"] = groq_key
-        modelo_groq = "groq/llama3-70b-8192"
+        
+        # Correção do nome do modelo para compatibilidade absoluta com o LiteLLM
+        modelo_groq = "groq/llama3-8b-8192"
         
         with st.spinner("🧠 Os cientistas estão debatendo e minerando o mercado mundial..."):
             # Criação dos Agentes apontando diretamente para a string do modelo
