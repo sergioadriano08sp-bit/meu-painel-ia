@@ -25,7 +25,7 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True):
     if not groq_key:
         st.error("❌ ERRO CRÍTICO: Você precisa colocar a sua Groq API Key para ativar o cérebro das IAs.")
     else:
-        # Conector oficial da LangChain para a Groq - Resolve 100% o BadRequestError
+        # Configuração do conector estável para a Groq
         llm_groq_oficial = ChatGroq(
             temperature=0.7,
             groq_api_key=groq_key,
@@ -33,7 +33,7 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True):
         )
         
         with st.spinner("🧠 Os cientistas estão debatendo e minerando o mercado mundial..."):
-            # Criação dos Agentes utilizando o conector oficial
+            # Criação dos Agentes alinhada com as versões travadas
             analista = Agent(
                 role='Analista de Tendências',
                 goal='Minerar produtos virais globais e identificar o que vende em massa.',
