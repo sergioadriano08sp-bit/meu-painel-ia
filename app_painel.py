@@ -2,6 +2,7 @@ import streamlit as st
 import os
 import requests
 from crewai import Agent, Task, Crew, Process
+from langchain_groq import ChatGroq
 
 # Configuração da Página do Aplicativo (Visual do Celular)
 st.set_page_config(page_title="Cibernética Autônoma", page_icon="🤖", layout="centered")
@@ -24,20 +25,21 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True):
     if not groq_key:
         st.error("❌ ERRO CRÍTICO: Você precisa colocar a sua Groq API Key para ativar o cérebro das IAs.")
     else:
-        # Configuração das Variáveis de Ambiente Diretas da Groq
-        os.environ["GROQ_API_KEY"] = groq_key
-        
-        # Correção do nome do modelo para compatibilidade absoluta com o LiteLLM
-        modelo_groq = "groq/llama3-8b-8192"
+        # Conector oficial da LangChain para a Groq - Resolve 100% o BadRequestError
+        llm_groq_oficial = ChatGroq(
+            temperature=0.7,
+            groq_api_key=groq_key,
+            model_name="llama3-8b-8192"
+        )
         
         with st.spinner("🧠 Os cientistas estão debatendo e minerando o mercado mundial..."):
-            # Criação dos Agentes apontando diretamente para a string do modelo
+            # Criação dos Agentes utilizando o conector oficial
             analista = Agent(
                 role='Analista de Tendências',
                 goal='Minerar produtos virais globais e identificar o que vende em massa.',
                 backstory='Especialista em encontrar o que vende em massa antes de todo mundo.',
                 verbose=True,
-                llm=modelo_groq,
+                llm=llm_groq_oficial,
                 allow_delegation=False
             )
             engenheiro = Agent(
@@ -45,7 +47,7 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True):
                 goal='Criar um projeto 1000x melhor e mais barato baseado no produto viral.',
                 backstory='Gênio da engenharia reversa. Elimina falhas de concorrentes.',
                 verbose=True,
-                llm=modelo_groq,
+                llm=llm_groq_oficial,
                 allow_delegation=False
             )
             arquiteto = Agent(
@@ -53,7 +55,7 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True):
                 goal='Criar roteiro de vendas para os robôs hiper-realistas.',
                 backstory='Especialista em automação financeira e avatares digitais.',
                 verbose=True,
-                llm=modelo_groq,
+                llm=llm_groq_oficial,
                 allow_delegation=False
             )
 
