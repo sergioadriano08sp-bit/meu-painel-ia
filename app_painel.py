@@ -11,7 +11,7 @@ from groq import Groq
 # ==============================================================================
 # ESTILIZAÇÃO MODO ESCURO / CYBERPUNK
 # ==============================================================================
-st.set_page_config(page_title="Império Cibernético v8.1", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Império Cibernético v8.2", page_icon="⚡", layout="centered")
 
 st.markdown("""
     <style>
@@ -24,8 +24,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚡ IMPÉRIO CIBERNÉTICO V8.1")
-st.write("Central Soberana: Fábrica Generativa Voltagem Estabilizada Sem Loops Cegos.")
+st.title("⚡ IMPÉRIO CIBERNÉTICO V8.2")
+st.write("Central Soberana: Alinhamento de Indentação de Rede Concluído.")
 
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
@@ -74,7 +74,7 @@ def criar_pdf_comercial(titulo, conteudo):
     return pdf.output()
 
 # ------------------------------------------------------------------------------
-# ABA 1: LABORATÓRIO GENERATIVO (Varre as chaves de forma linear e sem loops infinitos cegos)
+# ABA 1: LABORATÓRIO GENERATIVO (Varre as chaves de forma linear alinhada)
 # ------------------------------------------------------------------------------
 with aba_gerador:
     st.subheader("⚙️ Execução Generativa Estabilizada")
@@ -86,7 +86,6 @@ with aba_gerador:
             texto_completo = ""
             nome_produto = "Dispositivo Desconhecido"
             
-            # Captura a memória histórica de patentes anteriores
             historico_total = "Nenhuma invenção criada ainda."
             if os.path.exists(ARQUIVO_BANCO):
                 try:
@@ -96,7 +95,7 @@ with aba_gerador:
                         historico_total = ", ".join(df_h[col].astype(str).tolist())
                 except: pass
 
-            prompt_sistema = f"Tempo cibernético: {time.time()}. Histórico de patentes salvas: [{historico_total}]. Projete um NOVO dispositivo ou motor disruptivo focado em ENERGIA AUTOSSUSTENTÁVEL, CIBERNÉTICA ou CAPTAÇÃO LIVRE. Nunca replique dados anteriores. Na PRIMEIRA LINHA responda obrigatoriamente e apenas com o formato: 'NOME: [Nome da Invenção]'."
+            prompt_sistema = f"Tempo: {time.time()}. Histórico: [{historico_total}]. Projete um NOVO dispositivo ou motor focado em ENERGIA AUTOSSUSTENTÁVEL ou CIBERNÉTICA. Na PRIMEIRA LINHA responda obrigatoriamente: 'NOME: [Nome da Invenção]'."
 
             # CANAL 1: GOOGLE GEMINI
             if not texto_completo and lista_gemini:
@@ -105,10 +104,10 @@ with aba_gerador:
                         try:
                             client = genai.Client(api_key=chave)
                             texto_completo = client.models.generate_content(model='gemini-2.5-flash', contents=prompt_sistema).text
-                            st.info(f"⚡ Sucesso absoluto através do motor Google Gemini (Chave #{i+1})")
+                            st.info(f"⚡ Sucesso via Google Gemini (Chave #{i+1})")
                             break
-                        except Exception as e:
-                            st.warning(f"Aviso: Chave Google #{i+1} recusou o comando ou está sem saldo.")
+                        except:
+                            st.warning(f"Aviso: Chave Google #{i+1} indisponível.")
 
             # CANAL 2: GROQ (LLAMA 3.1)
             if not texto_completo and lista_groq:
@@ -117,10 +116,10 @@ with aba_gerador:
                         try:
                             client_groq = Groq(api_key=chave)
                             texto_completo = client_groq.chat.completions.create(messages=[{"role": "user", "content": prompt_sistema}], model="llama-3.1-8b-instant").choices.message.content
-                            st.info(f"⚡ Sucesso absoluto através do motor Groq Llama (Chave #{i+1})")
+                            st.info(f"⚡ Sucesso via Groq Llama (Chave #{i+1})")
                             break
-                        except Exception as e:
-                            st.warning(f"Aviso: Chave Groq #{i+1} recusou o comando ou está sem saldo.")
+                        except:
+                            st.warning(f"Aviso: Chave Groq #{i+1} indisponível.")
 
             # CANAL 3: MISTRAL AI
             if not texto_completo and lista_mistral:
@@ -131,10 +130,10 @@ with aba_gerador:
                             payload = {"model": "mistral-tiny", "messages": [{"role": "user", "content": prompt_sistema}]}
                             res = requests.post("https://mistral.ai", json=payload, headers=headers, timeout=10).json()
                             texto_completo = res["choices"]["message"]["content"]
-                            st.info(f"⚡ Sucesso absoluto através do motor Mistral AI (Chave #{i+1})")
+                            st.info(f"⚡ Sucesso via Mistral AI (Chave #{i+1})")
                             break
-                        except Exception as e:
-                            st.warning(f"Aviso: Chave Mistral #{i+1} recusou o comando.")
+                        except:
+                            st.warning(f"Aviso: Chave Mistral #{i+1} indisponível.")
 
             # CANAL 4: COHERE
             if not texto_completo and lista_cohere:
@@ -145,24 +144,33 @@ with aba_gerador:
                             payload = {"model": "command-r-plus", "message": prompt_sistema}
                             res = requests.post("https://cohere.com", json=payload, headers=headers, timeout=10).json()
                             texto_completo = res["text"]
-                            st.info(f"⚡ Sucesso absoluto através do motor Cohere (Chave #{i+1})")
+                            st.info(f"⚡ Sucesso via Cohere (Chave #{i+1})")
                             break
-                        except Exception as e:
-                            st.warning(f"Aviso: Chave Cohere #{i+1} recusou o comando.")
+                        except:
+                            st.warning(f"Aviso: Chave Cohere #{i+1} indisponível.")
 
-            # CANAL 5: HUGGING FACE
+            # CANAL 5: HUGGING FACE (ALINHAMENTO SEGURO CONCLUÍDO)
             if not texto_completo and lista_hf:
-                with st.spinner("🛡️ Ativando a fortaleza final de código aberto da Hugging Face..."):
+                with st.spinner("🛡️ Ativando a fortaleza de código aberto da Hugging Face..."):
                     for i, token in enumerate(lista_hf):
                         try:
                             headers = {"Authorization": f"Bearer {token}"}
                             payload = {"inputs": prompt_sistema}
                             res = requests.post("https://huggingface.co", json=payload, headers=headers, timeout=10).json()
-                            if isinstance(res, list) and "generated_text" in res[0]:
+                            if isinstance(res, list) and len(res) > 0 and "generated_text" in res[0]:
                                 texto_completo = res[0]["generated_text"]
                             elif "generated_text" in res:
                                 texto_completo = res["generated_text"]
                             if texto_completo:
-                                st.info(f"⚡ Sucesso absoluto através do motor Llama OpenSource na Hugging Face (Token #{i+1})")
+                                st.info(f"⚡ Sucesso via Hugging Face (Token #{i+1})")
                                 break
-                        except Exception as e:
+                        except:
+                            st.warning(f"Aviso: Token Hugging Face #{i+1} indisponível.")
+
+            # PROCESSAR E GRAVAÇÃO
+            if texto_completo:
+                if "NOME:" in texto_completo:
+                    for linha in texto_completo.split("\n"):
+                        if linha.startswith("NOME:"):
+                            nome_produto = linha.replace("NOME:", "").strip()
+                            break
