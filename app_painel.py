@@ -1,4 +1,4 @@
-  import streamlit as st
+import streamlit as st
 import os
 import requests
 import pandas as pd
@@ -11,7 +11,7 @@ from groq import Groq
 # ==============================================================================
 # ESTILIZAÇÃO MODO ESCURO / CYBERPUNK
 # ==============================================================================
-st.set_page_config(page_title="Império Cibernético v9.0", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Império Cibernético v9.1", page_icon="⚡", layout="centered")
 
 st.markdown("""
     <style>
@@ -24,8 +24,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚡ IMPÉRIO CIBERNÉTICO V9.0")
-st.write("Usina Suprema: 10 Motores Mundiais de Inteligência Artificial e Mídia Sintética.")
+st.title("⚡ IMPÉRIO CIBERNÉTICO V9.1")
+st.write("Usina Suprema: Alinhamento de Margem Inicial Concluído com Sucesso.")
 
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
@@ -175,4 +175,3 @@ with aba_gerador:
                             headers = {"Authorization": f"Bearer {token}"}
                             payload = {"inputs": prompt_sistema}
                             res = requests.post("https://huggingface.co", json=payload, headers=headers, timeout=10).json()
-         
