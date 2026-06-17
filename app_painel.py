@@ -7,19 +7,19 @@ from langchain_openai import ChatOpenAI
 # Configuração da Página do Aplicativo (Visual do Celular)
 st.set_page_config(page_title="Cibernética Autônoma", page_icon="🤖", layout="centered")
 
-st.title("🤖 Painel do Supervisor Soberano (Versão Gratuita)")
+st.title("🤖 Painel do Supervisor Soberano")
 st.write("Sua equipe de gênios rodando sem custos usando a IA da Groq.")
 
 # ==============================================================================
 # PAINEL DE CREDENCIAIS (ENTRADA SEGURA)
 # ==============================================================================
 st.sidebar.header("🔑 Chaves de Ativação")
-groq_key = st.sidebar.text_input("Groq API Key (Gratuita)", type="password", help="Sua chave gratuita da Groq")
-heygen_key = st.sidebar.text_input("HeyGen API Key (Teste Grátis)", type="password", help="Sua chave de teste do HeyGen")
-eleven_key = st.sidebar.text_input("ElevenLabs API Key (Plano Grátis)", type="password", help="Sua chave grátis da ElevenLabs")
+groq_key = st.sidebar.text_input("Groq API Key (Gratuita)", type="password")
+heygen_key = st.sidebar.text_input("HeyGen API Key (Teste Grátis)", type="password")
+eleven_key = st.sidebar.text_input("ElevenLabs API Key (Plano Grátis)", type="password")
 
 # ==============================================================================
-# CONFIGURAÇÃO DO MOTOR DE IA GRATUITO (GROQ)
+# CONFIGURAÇÃO E EXECUÇÃO DO SISTEMA
 # ==============================================================================
 if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True):
     if not groq_key:
@@ -33,36 +33,44 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True):
         )
         
         with st.spinner("🧠 Os cientistas estão debatendo e minerando o mercado mundial..."):
-            # Criação Automática dos Agentes com o cérebro gratuito (llm=llm_gratuito)
+            # Criação dos Agentes atualizada para compatibilidade total
             analista = Agent(
                 role='Analista de Tendências',
-                goal='Minerar produtos virais globais.',
+                goal='Minerar produtos virais globais e identificar o que vende em massa.',
                 backstory='Especialista em encontrar o que vende em massa antes de todo mundo.',
                 verbose=True,
-                llm=llm_gratuito
+                llm=llm_gratuito,
+                allow_delegation=False
             )
             engenheiro = Agent(
                 role='Engenheiro de Hiper-Melhoria',
                 goal='Criar um projeto 1000x melhor e mais barato baseado no produto viral.',
                 backstory='Gênio da engenharia reversa. Elimina falhas de concorrentes.',
                 verbose=True,
-                llm=llm_gratuito
+                llm=llm_gratuito,
+                allow_delegation=False
             )
             arquiteto = Agent(
                 role='Arquiteto de Automação',
                 goal='Criar roteiro de vendas para os robôs hiper-realistas.',
                 backstory='Especialista em automação financeira e avatares digitais.',
                 verbose=True,
-                llm=llm_gratuito
+                llm=llm_gratuito,
+                allow_delegation=False
             )
 
             # Definição das Tarefas Sucessivas
-            t1 = Task(description='Varra as tendências e isole o produto físico campeão.', expected_output='Relatório do produto viral.', agent=analista)
-            t2 = Task(description='Desenhe a versão definitiva corrigindo falhas.', expected_output='Projeto conceitual otimizado.', agent=engenheiro)
-            t3 = Task(description='Escreva o roteiro de vendas persuasivo para a IA de vídeo.', expected_output='Roteiro de marketing final.', agent=arquiteto)
+            t1 = Task(description='Varra as tendências do mercado atual e isole o produto físico campeão.', expected_output='Relatório com o nome e detalhes do produto viral.', agent=analista)
+            t2 = Task(description='Desenhe a versão definitiva do produto anterior corrigindo falhas.', expected_output='Projeto conceitual com 5 melhorias brutais.', agent=engenheiro)
+            t3 = Task(description='Escreva o roteiro de vendas persuasivo para a IA de vídeo usar.', expected_output='Roteiro de marketing final curto de até 300 letras.', agent=arquiteto)
 
             # Ativação do Enxame
-            enxame = Crew(agents=[analista, engenheiro, arquiteto], tasks=[t1, t2, t3], process=Process.sequential)
+            enxame = Crew(
+                agents=[analista, engenheiro, arquiteto], 
+                tasks=[t1, t2, t3], 
+                process=Process.sequential,
+                verbose=True
+            )
             relatorio_final = enxame.kickoff()
             
         st.success("✅ Relatório de Engenharia e Vendas Concluído!")
