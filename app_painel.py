@@ -9,9 +9,9 @@ from fpdf import FPDF
 from groq import Groq
 
 # Configuração da Página do Aplicativo (Visual do Celular)
-st.set_page_config(page_title="Cibernética Autônoma v5.4", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Cibernética Autônoma v5.5", page_icon="⚡", layout="centered")
 
-st.title("⚡ Império Cibernético Autônomo v5.4")
+st.title("⚡ Império Cibernético Autônomo v5.5")
 st.write("Geração infinita de Energia Autossustentável e Cibernética com exportação comercial em PDF.")
 
 # Arquivo local de banco de dados
@@ -201,5 +201,5 @@ if os.path.exists(ARQUIVO_BANCO):
         csv_data = df_visualizacao.to_csv(index=False).encode('utf-8')
         st.download_button(label="📥 BAIXAR PLANILHA COMPLETA (CSV)", data=csv_data, file_name="historico_ia_autonoma.csv", mime="text/csv", use_container_width=True)
     except:
-        st.info("Inicie a primeira operação para sincronizar a tabela de dados.")
+        st.info("Inicie a primeira operação para sincronizar os dados.")
 else:
