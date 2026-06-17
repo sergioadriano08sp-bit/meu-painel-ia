@@ -9,9 +9,9 @@ from fpdf import FPDF
 from groq import Groq
 
 # Configuração da Página do Aplicativo (Visual do Celular)
-st.set_page_config(page_title="Cibernética Autônoma v5.6", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Cibernética Autônoma v5.7", page_icon="⚡", layout="centered")
 
-st.title("⚡ Império Cibernético Autônomo v5.6")
+st.title("⚡ Império Cibernético Autônomo v5.7")
 st.write("Geração infinita de Energia Autossustentável e Cibernética com exportação comercial em PDF.")
 
 # Arquivo local de banco de dados
@@ -47,10 +47,10 @@ def criar_pdf_comercial(titulo, conteudo):
 # ==============================================================================
 # FUNÇÃO PARA ENVIAR ALERTA NO SEU CELULAR
 # ==============================================================================
-def enviar_aviso_celular(token, chat_id, mensagem):
+def enviar_aviso_celular(token, chat_id, message):
     if token and chat_id:
         url = f"https://telegram.org{token}/sendMessage"
-        payload = {"chat_id": chat_id, "text": mensagem}
+        payload = {"chat_id": chat_id, "text": message}
         try:
             requests.post(url, json=payload)
         except:
@@ -134,14 +134,14 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True) or m
                 else:
                     raise Exception("Acessando redundância da Groq")
             except:
-                # TENTATIVA 2: SE O GEMINI FALHAR, ACIONA O CLIENTE DIRETO E OFICIAL DA GROQ
+                # TENTATIVA 2: MODELO ATUALIZADO E HOMOLOGADO PELA GROQ (Llama 3.1 8B Instant)
                 if groq_key:
                     with st.spinner(f"⚠️ Redundância: Cérebro Groq Oficial processando evolução..."):
                         try:
                             client_groq = Groq(api_key=groq_key)
                             chat_completion = client_groq.chat.completions.create(
                                 messages=[{"role": "user", "content": prompt_sistema}],
-                                model="llama3-8b-8192",
+                                model="llama-3.1-8b-instant",
                             )
                             texto_completo = chat_completion.choices.message.content
                         except Exception as erro_interno_groq:
@@ -172,7 +172,7 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True) or m
             st.rerun()
 
 # ==============================================================================
-# PAINEL DE EXPORTAÇÃO COMERCIAL E BANCO DE DADOS (BLINDADO E SEM ELSES VAZIOS)
+# PAINEL DE EXPORTAÇÃO COMERCIAL E BANCO DE DADOS
 # ==============================================================================
 st.markdown("---")
 st.subheader("📋 Banco de Dados de Patentes Cumulativas")
@@ -206,4 +206,3 @@ if os.path.exists(ARQUIVO_BANCO):
 
 if not os.path.exists(ARQUIVO_BANCO):
     st.info("A planilha está vazia. Inicie a operação para colher os primeiros relatórios!")
-
