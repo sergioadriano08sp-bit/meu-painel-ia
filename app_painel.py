@@ -1,8 +1,7 @@
 import streamlit as st
 import os
 import requests
-from crewai import Agent, Task, Crew, Process
-from langchain_openai import ChatOpenAI
+from crewai import Agent, Task, Crew, Process, LLM
 
 # Configuração da Página do Aplicativo (Visual do Celular)
 st.set_page_config(page_title="Cibernética Autônoma", page_icon="🤖", layout="centered")
@@ -25,21 +24,21 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True):
     if not groq_key:
         st.error("❌ ERRO CRÍTICO: Você precisa colocar a sua Groq API Key para ativar o cérebro das IAs.")
     else:
-        # Configura o motor gratuito apontando para a Groq utilizando o modelo Llama 3
-        llm_gratuito = ChatOpenAI(
-            openai_api_base="https://groq.com",
-            openai_api_key=groq_key,
-            model_name="llama3-70b-8192"
+        # Configuração do motor nativo do CrewAI apontando para a Groq (Modelo Llama 3)
+        # Isso resolve 100% os erros de validação do Pydantic
+        llm_nativo = LLM(
+            model="groq/llama3-70b-8192",
+            api_key=groq_key
         )
         
         with st.spinner("🧠 Os cientistas estão debatendo e minerando o mercado mundial..."):
-            # Criação dos Agentes atualizada para compatibilidade total
+            # Criação dos Agentes com formato de conexão 100% atualizado
             analista = Agent(
                 role='Analista de Tendências',
                 goal='Minerar produtos virais globais e identificar o que vende em massa.',
                 backstory='Especialista em encontrar o que vende em massa antes de todo mundo.',
                 verbose=True,
-                llm=llm_gratuito,
+                llm=llm_nativo,
                 allow_delegation=False
             )
             engenheiro = Agent(
@@ -47,7 +46,7 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True):
                 goal='Criar um projeto 1000x melhor e mais barato baseado no produto viral.',
                 backstory='Gênio da engenharia reversa. Elimina falhas de concorrentes.',
                 verbose=True,
-                llm=llm_gratuito,
+                llm=llm_nativo,
                 allow_delegation=False
             )
             arquiteto = Agent(
@@ -55,7 +54,7 @@ if st.button("🚀 INICIAR OPERAÇÃO AUTÔNOMA", use_container_width=True):
                 goal='Criar roteiro de vendas para os robôs hiper-realistas.',
                 backstory='Especialista em automação financeira e avatares digitais.',
                 verbose=True,
-                llm=llm_gratuito,
+                llm=llm_nativo,
                 allow_delegation=False
             )
 
