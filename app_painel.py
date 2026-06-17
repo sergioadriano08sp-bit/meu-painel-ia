@@ -11,7 +11,7 @@ from groq import Groq
 # ==============================================================================
 # ESTILIZAÇÃO MODO ESCURO / CYBERPUNK
 # ==============================================================================
-st.set_page_config(page_title="Império Cibernético v9.1", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Império Cibernético v9.2", page_icon="⚡", layout="centered")
 
 st.markdown("""
     <style>
@@ -24,8 +24,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚡ IMPÉRIO CIBERNÉTICO V9.1")
-st.write("Usina Suprema: Alinhamento de Margem Inicial Concluído com Sucesso.")
+st.title("⚡ IMPÉRIO CIBERNÉTICO V9.2")
+st.write("Usina Suprema: Correção do Bloco Hugging Face Concluída com Sucesso.")
 
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
@@ -167,7 +167,7 @@ with aba_gerador:
                             break
                         except: pass
 
-            # CANAL 5: HUGGING FACE
+            # CANAL 5: HUGGING FACE (ESTRUTURA DE EXCEPT REPARADA)
             if not texto_completo and lista_hf:
                 with st.spinner("🛡️ Ativando a fortaleza da Hugging Face..."):
                     for i, token in enumerate(lista_hf):
