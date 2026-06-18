@@ -9,9 +9,9 @@ from fpdf import FPDF
 from groq import Groq
 
 # Configuração da Página do Aplicativo (Visual do Celular)
-st.set_page_config(page_title="Império Cibernético v10.4", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Império Cibernético v10.5", page_icon="⚡", layout="centered")
 
-# Estilização Cyberpunk Aprimorada com Painéis de Telemetria
+# Estilização Cyberpunk Aprimorada
 st.markdown("""
     <style>
     .stApp { background-color: #0d0e15; color: #00ff66; }
@@ -19,12 +19,11 @@ st.markdown("""
     .stButton>button { background-color: #8a2be2; color: #00ff66; border: 2px solid #00ff66; box-shadow: 0 0 15px #8a2be2; width: 100%; height: 50px; font-weight: bold; }
     .stButton>button:hover { background-color: #00ff66; color: #0d0e15; box-shadow: 0 0 20px #00ff66; }
     .stTextInput>div>div>input, .stTextArea>div>div>textarea { background-color: #1a1c29 !important; color: #00ff66 !important; border: 1px solid #8a2be2 !important; }
-    [data-testid="stMetricValue"] { color: #00ff66 !important; font-family: monospace; }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚡ IMPÉRIO CIBERNÉTICO V10.4")
-st.write("Central Soberana: Monitoramento Analítico de Telemetria Quântica.")
+st.title("⚡ IMPÉRIO CIBERNÉTICO V10.5")
+st.write("Central Soberana: Sintaxe de Rede Alinhada e Blindada com Sucesso.")
 
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
@@ -34,9 +33,7 @@ for c in chaves_estado:
     if c not in st.session_state:
         st.session_state[c] = ""
 
-# ==============================================================================
-# PAINEL LATERAL DE TELEMETRIA E CARGA DE ENERGIA
-# ==============================================================================
+# Painel Lateral de Credenciais
 st.sidebar.header("🔑 Banco de Energia Suprema")
 input_gemini = st.sidebar.text_area("1) Google Gemini Keys", value=st.session_state.gemini_s)
 input_groq = st.sidebar.text_area("2) Groq (Llama) Keys", value=st.session_state.groq_s)
@@ -48,11 +45,10 @@ input_claude = st.sidebar.text_area("7) Claude (Anthropic) Keys", value=st.sessi
 input_chatgpt = st.sidebar.text_area("8) ChatGPT (OpenAI) Keys", value=st.session_state.chatgpt_s)
 
 st.sidebar.markdown("---")
-st.sidebar.header("🎥 Motores Multimídia & Robôs")
 input_eleven = st.sidebar.text_input("9) ElevenLabs API Key", value=st.session_state.eleven_s, type="password")
 input_heygen = st.sidebar.text_input("10) HeyGen API Key", value=st.session_state.heygen_s, type="password")
 
-# Salva credenciais
+# Salva na sessão
 st.session_state.gemini_s = input_gemini
 st.session_state.groq_s = input_groq
 st.session_state.mistral_s = input_mistral
@@ -64,7 +60,7 @@ st.session_state.chatgpt_s = input_chatgpt
 st.session_state.eleven_s = input_eleven
 st.session_state.heygen_s = input_heygen
 
-# Separação limpa das listas de chaves
+# Listas limpas de chaves
 lista_gemini = [k.strip() for k in input_gemini.split(",") if k.strip()]
 lista_groq = [k.strip() for k in input_groq.split(",") if k.strip()]
 lista_mistral = [k.strip() for k in input_mistral.split(",") if k.strip()]
@@ -74,11 +70,12 @@ lista_qwen = [k.strip() for k in input_qwen.split(",") if k.strip()]
 lista_claude = [k.strip() for k in input_claude.split(",") if k.strip()]
 lista_chatgpt = [k.strip() for k in input_chatgpt.split(",") if k.strip()]
 
-# Monitor de Carga Visual das Chaves
+# Monitor de Carga das Chaves na Lateral
 st.sidebar.markdown("---")
-st.sidebar.subheader("📊 Gráfico de Monitoramento")
-st.sidebar.info(f"⚡ Canais Prontos:\nGemini ({len(lista_gemini)}) | Groq ({len(lista_groq)}) | Mistral ({len(lista_mistral)}) | Cohere ({len(lista_cohere)}) | HuggingFace ({len(lista_hf)}) | Qwen ({len(lista_qwen)}) | Claude ({len(lista_claude)}) | ChatGPT ({len(lista_chatgpt)})")
+st.sidebar.subheader("📊 Canais Prontos")
+st.sidebar.info(f"Gemini: {len(lista_gemini)} | Groq: {len(lista_groq)} | Mistral: {len(lista_mistral)} \nCohere: {len(lista_cohere)} | HF: {len(lista_hf)} | Qwen: {len(lista_qwen)} \nClaude: {len(lista_claude)} | ChatGPT: {len(lista_chatgpt)}")
 
+# Abas do sistema
 aba_gerador, aba_vendas, aba_fisica = st.tabs(["🧠 Laboratório Generativo", "🏪 Máquina de Vendas", "🔌 Engenharia Maker Física"])
 
 def criar_pdf_comercial(titulo, conteudo):
@@ -91,22 +88,26 @@ def criar_pdf_comercial(titulo, conteudo):
     pdf.multi_cell(0, 10, txt=conteudo.encode('utf-8', 'ignore').decode('utf-8'))
     return pdf.output()
 
-# FUNÇÕES DE CHAMADA COM MARCAÇÃO DE TEMPO DE RESPOSTA (TELEMETRIA)
+# ==============================================================================
+# FUNÇÕES DE EXECUÇÃO ISOLADAS (TELEMETRIA E PROTEÇÃO DE SINTAXE)
+# ==============================================================================
 def chamar_gemini(chave, prompt):
     t_inicio = time.time()
     try:
         client = genai.Client(api_key=chave)
         res = client.models.generate_content(model='gemini-2.5-flash', contents=prompt).text
         return res, f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: return "", f"Erro: {str(e)}"
+    except Exception as e: 
+        return "", f"Erro: {str(e)}"
 
 def chamar_groq(chave, prompt):
     t_inicio = time.time()
     try:
         client_groq = Groq(api_key=chave)
         res = client_groq.chat.completions.create(messages=[{"role": "user", "content": prompt}], model="llama-3.1-8b-instant").choices.message.content
-        return res, f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: return "", f"Erro: {str(e)}"
+        return res, f"Sucesso in {time.time() - t_inicio:.2f}s"
+    except Exception as e: 
+        return "", f"Erro: {str(e)}"
 
 def chamar_mistral(chave, prompt):
     t_inicio = time.time()
@@ -115,7 +116,8 @@ def chamar_mistral(chave, prompt):
         payload = {"model": "mistral-tiny", "messages": [{"role": "user", "content": prompt}]}
         res = requests.post("https://mistral.ai", json=payload, headers=headers, timeout=10).json()
         return res["choices"]["message"]["content"], f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: return "", f"Erro: {str(e)}"
+    except Exception as e: 
+        return "", f"Erro: {str(e)}"
 
 def chamar_cohere(chave, prompt):
     t_inicio = time.time()
@@ -124,7 +126,8 @@ def chamar_cohere(chave, prompt):
         payload = {"model": "command-r-plus", "message": prompt}
         res = requests.post("https://cohere.com", json=payload, headers=headers, timeout=10).json()
         return res["text"], f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: return "", f"Erro: {str(e)}"
+    except Exception as e: 
+        return "", f"Erro: {str(e)}"
 
 def chamar_huggingface(token, prompt):
     t_inicio = time.time()
@@ -132,9 +135,10 @@ def chamar_huggingface(token, prompt):
         headers = {"Authorization": f"Bearer {token}"}
         payload = {"inputs": prompt}
         res = requests.post("https://huggingface.co", json=payload, headers=headers, timeout=10).json()
-        txt = res[0].get("generated_text", "") if isinstance(res, list) else res.get("generated_text", "")
+        txt = res.get("generated_text", "") if isinstance(res, list) else res.get("generated_text", "")
         return txt, f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: return "", f"Erro: {str(e)}"
+    except Exception as e: 
+        return "", f"Erro: {str(e)}"
 
 def chamar_qwen(chave, prompt):
     t_inicio = time.time()
@@ -143,7 +147,8 @@ def chamar_qwen(chave, prompt):
         payload = {"model": "qwen/qwen-2.5-72b-instruct", "messages": [{"role": "user", "content": prompt}]}
         res = requests.post("https://openrouter.ai", json=payload, headers=headers, timeout=10).json()
         return res["choices"]["message"]["content"], f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: return "", f"Erro: {str(e)}"
+    except Exception as e: 
+        return "", f"Erro: {str(e)}"
 
 def chamar_claude(chave, prompt):
     t_inicio = time.time()
@@ -152,7 +157,8 @@ def chamar_claude(chave, prompt):
         payload = {"model": "claude-3-haiku-20240307", "max_tokens": 1000, "messages": [{"role": "user", "content": prompt}]}
         res = requests.post("https://anthropic.com", json=payload, headers=headers, timeout=10).json()
         return res["content"]["text"], f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: return "", f"Erro: {str(e)}"
+    except Exception as e: 
+        return "", f"Erro: {str(e)}"
 
 def chamar_chatgpt(chave, prompt):
     t_inicio = time.time()
@@ -161,15 +167,16 @@ def chamar_chatgpt(chave, prompt):
         payload = {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": prompt}]}
         res = requests.post("https://openai.com", json=payload, headers=headers, timeout=10).json()
         return res["choices"]["message"]["content"], f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: return "", f"Erro: {str(e)}"
+    except Exception as e: 
+        return "", f"Erro: {str(e)}"
 
 # ------------------------------------------------------------------------------
-# ABA 1: OPERAÇÃO COM PAINEL DE TELEMETRIA ATIVO
+# ABA 1: EXECUÇÃO DO LABORATÓRIO (FLUXO TOTALMENTE PLANO CORRIGIDO)
 # ------------------------------------------------------------------------------
 with aba_gerador:
     st.subheader("⚙️ Painel de Ação e Diagnóstico de Rede")
     
-    if st.button("🚀 DISPARAR ENXAME CIBERNÉTICO"):
+    if st.button("🚀 DISPARAR ENXAME CIBERNÉTICO", use_container_width=True):
         chaves_existentes = any([lista_gemini, lista_groq, lista_mistral, lista_cohere, lista_hf, lista_qwen, lista_claude, lista_chatgpt])
         if not chaves_existentes:
             st.error("❌ Alerta de Sistema: Banco de energia vazio. Preencha as chaves à esquerda.")
@@ -177,7 +184,6 @@ with aba_gerador:
             texto_completo = ""
             nome_produto = "Dispositivo Desconhecido"
             
-            # Caixa visual de monitoramento em tempo real
             box_telemetria = st.code("📡 Inicializando rastreador de sinal... Ready.")
             
             historico_total = "Nenhuma invenção criada ainda."
@@ -186,3 +192,7 @@ with aba_gerador:
                     df_h = pd.read_csv(ARQUIVO_BANCO)
                     if not df_h.empty:
                         col = "Invenção" if "Invenção" in df_h.columns else "Produto Identificado"
+                        historico_total = ", ".join(df_h[col].astype(str).tolist())
+                except: 
+                    pass
+
