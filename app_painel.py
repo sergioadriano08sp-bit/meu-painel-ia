@@ -9,7 +9,7 @@ from fpdf import FPDF
 from groq import Groq
 
 # Configuração da Página do Aplicativo (Visual do Celular)
-st.set_page_config(page_title="Império Cibernético v10.7", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Império Cibernético v10.8", page_icon="⚡", layout="centered")
 
 # Estilização Cyberpunk Aprimorada
 st.markdown("""
@@ -22,8 +22,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚡ IMPÉRIO CIBERNÉTICO V10.7")
-st.write("Central Soberana: Atualização de Modelos de Rede Concluída com Sucesso.")
+st.title("⚡ IMPÉRIO CIBERNÉTICO V10.8")
+st.write("Central Soberana: Tratamento de Dicionário Quântico de API Concluído.")
 
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
@@ -48,7 +48,7 @@ def criar_pdf_comercial(titulo, conteudo):
     return pdf.output()
 
 # ------------------------------------------------------------------------------
-# ABA 1: EXECUÇÃO DO LABORATÓRIO (DIRETO COM MODELO LLAMA 3.3 ATUALIZADO)
+# ABA 1: EXECUÇÃO DO LABORATÓRIO (TRATAMENTO COMPLETO DE RESPOSTA DA GROQ)
 # ------------------------------------------------------------------------------
 with aba_gerador:
     box_telemetria = st.code("📡 Inicializando rastreador de sinal... Ready.")
@@ -73,7 +73,7 @@ with aba_gerador:
 
             prompt_sistema = f"Tempo: {time.time()}. Histórico: [{historico_total}]. Projete um dispositivo novo e disruptivo focado em ENERGIA AUTOSSUSTENTÁVEL ou CIBERNÉTICA. Na PRIMEIRA LINHA responda apenas: 'NOME: [Nome]'."
 
-            # Executa no modelo Llama 3.3 Versatile (Substituto oficial do Llama 3.1)
+            # Executa com verificação inteligente de lista ou objeto
             try:
                 t_inicio = time.time()
                 client_groq = Groq(api_key=groq_key_direta.strip())
@@ -81,7 +81,17 @@ with aba_gerador:
                     messages=[{"role": "user", "content": prompt_sistema}], 
                     model="llama-3.3-70b-versatile"
                 )
-                texto_completo = chat_completion.choices.message.content
+                
+                # TRAVA DE SEGURANÇA: Lê a resposta caso venha como dicionário, lista ou objeto nativo
+                if hasattr(chat_completion, 'choices'):
+                    escolha = chat_completion.choices[0]
+                    if hasattr(escolha, 'message'):
+                        texto_completo = choice.message.content if hasattr(escolha.message, 'content') else str(escolha.message)
+                    else:
+                        texto_completo = escolha['message']['content'] if 'message' in escolha else str(escolha)
+                else:
+                    texto_completo = chat_completion['choices'][0]['message']['content']
+
                 box_telemetria.code(f"📡 Canal Groq Llama 3.3: Sucesso em {time.time() - t_inicio:.2f}s")
             except Exception as e:
                 box_telemetria.code(f"📡 Canal Groq Falhou -> Erro: {str(e)}")
@@ -106,7 +116,7 @@ with aba_gerador:
                 st.write(texto_completo)
                 st.balloons()
             else:
-                st.error("🚨 FALHA CRÍTICA: A comunicação falhou. Verifique a mensagem detalhada na caixa de telemetria acima.")
+                st.error("🚨 FALHA CRÍTICA: Não foi possível processar o texto final. Detalhes do erro na telemetria.")
 
 # ------------------------------------------------------------------------------
 # ABAS 2 E 3
