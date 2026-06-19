@@ -9,7 +9,7 @@ from fpdf import FPDF
 from groq import Groq
 
 # Configuração da Página do Aplicativo (Visual do Celular)
-st.set_page_config(page_title="Império Cibernético v10.6", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Império Cibernético v10.7", page_icon="⚡", layout="centered")
 
 # Estilização Cyberpunk Aprimorada
 st.markdown("""
@@ -22,13 +22,13 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚡ IMPÉRIO CIBERNÉTICO V10.6")
-st.write("Central Soberana: Motores de Disparo Imediato sem Travamento de Tela.")
+st.title("⚡ IMPÉRIO CIBERNÉTICO V10.7")
+st.write("Central Soberana: Atualização de Modelos de Rede Concluída com Sucesso.")
 
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
 # ==============================================================================
-# PAINEL CENTRAL DE ENTRADA DIRETA (Força o envio imediato da chave)
+# PAINEL CENTRAL DE ENTRADA DIRETA
 # ==============================================================================
 st.subheader("🔑 Ativação Direta do Enxame")
 st.write("Cole a sua chave da Groq (a que começa com gsk_...) no campo abaixo para ligar a máquina de graça:")
@@ -48,7 +48,7 @@ def criar_pdf_comercial(titulo, conteudo):
     return pdf.output()
 
 # ------------------------------------------------------------------------------
-# ABA 1: EXECUÇÃO DO LABORATÓRIO (DIRETO PELA CHAVE DIGITADA)
+# ABA 1: EXECUÇÃO DO LABORATÓRIO (DIRETO COM MODELO LLAMA 3.3 ATUALIZADO)
 # ------------------------------------------------------------------------------
 with aba_gerador:
     box_telemetria = st.code("📡 Inicializando rastreador de sinal... Ready.")
@@ -60,7 +60,7 @@ with aba_gerador:
             texto_completo = ""
             nome_produto = "Dispositivo Desconhecido"
             
-            box_telemetria.code("📡 Roteando dados para Canal Reserva [Groq Llama]...")
+            box_telemetria.code("📡 Roteando dados para Canal Atualizado [Groq Llama 3.3]...")
             
             historico_total = "Nenhuma invenção criada ainda."
             if os.path.exists(ARQUIVO_BANCO):
@@ -71,17 +71,18 @@ with aba_gerador:
                         historico_total = ", ".join(df_h[col].astype(str).tolist())
                 except: pass
 
-            prompt_sistema = f"Tempo: {time.time()}. Histórico: [{historico_total}]. Projete um dispositivo novo focado em ENERGIA AUTOSSUSTENTÁVEL ou CIBERNÉTICA. Na PRIMEIRA LINHA responda apenas: 'NOME: [Nome]'."
+            prompt_sistema = f"Tempo: {time.time()}. Histórico: [{historico_total}]. Projete um dispositivo novo e disruptivo focado em ENERGIA AUTOSSUSTENTÁVEL ou CIBERNÉTICA. Na PRIMEIRA LINHA responda apenas: 'NOME: [Nome]'."
 
-            # Executa direto no motor da Groq oficial sem passar por menus laterais
+            # Executa no modelo Llama 3.3 Versatile (Substituto oficial do Llama 3.1)
             try:
                 t_inicio = time.time()
                 client_groq = Groq(api_key=groq_key_direta.strip())
-                texto_completo = client_groq.chat.completions.create(
+                chat_completion = client_groq.chat.completions.create(
                     messages=[{"role": "user", "content": prompt_sistema}], 
-                    model="llama-3.1-8b-instant"
-                ).choices.message.content
-                box_telemetria.code(f"📡 Canal Groq: Sucesso em {time.time() - t_inicio:.2f}s")
+                    model="llama-3.3-70b-versatile"
+                )
+                texto_completo = chat_completion.choices.message.content
+                box_telemetria.code(f"📡 Canal Groq Llama 3.3: Sucesso em {time.time() - t_inicio:.2f}s")
             except Exception as e:
                 box_telemetria.code(f"📡 Canal Groq Falhou -> Erro: {str(e)}")
 
@@ -92,7 +93,7 @@ with aba_gerador:
                             nome_produto = linha.replace("NOME:", "").strip()
                             break
                 
-                # Gravação na planilha
+                # Gravação na planilha de dados
                 data_atual = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                 nova_linha = pd.DataFrame([{"Data/Hora": data_atual, "Invenção": nome_produto, "Projeto de Engenharia": texto_completo}])
                 if os.path.exists(ARQUIVO_BANCO):
@@ -105,7 +106,7 @@ with aba_gerador:
                 st.write(texto_completo)
                 st.balloons()
             else:
-                st.error("🚨 FALHA CRÍTICA: A chave digitada acima foi recusada pelo servidor da Groq. Verifique se o código gsk_ foi copiado por inteiro.")
+                st.error("🚨 FALHA CRÍTICA: A comunicação falhou. Verifique a mensagem detalhada na caixa de telemetria acima.")
 
 # ------------------------------------------------------------------------------
 # ABAS 2 E 3
