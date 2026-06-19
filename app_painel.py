@@ -9,7 +9,7 @@ from fpdf import FPDF
 from groq import Groq
 
 # Configuração da Página do Aplicativo (Visual do Celular)
-st.set_page_config(page_title="Império Cibernético v10.5", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Império Cibernético v10.6", page_icon="⚡", layout="centered")
 
 # Estilização Cyberpunk Aprimorada
 st.markdown("""
@@ -22,60 +22,19 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚡ IMPÉRIO CIBERNÉTICO V10.5")
-st.write("Central Soberana: Sintaxe de Rede Alinhada e Blindada com Sucesso.")
+st.title("⚡ IMPÉRIO CIBERNÉTICO V10.6")
+st.write("Central Soberana: Motores de Disparo Imediato sem Travamento de Tela.")
 
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
-# Preservação de estados na memória de sessão
-chaves_estado = ["gemini_s", "groq_s", "mistral_s", "cohere_s", "hf_s", "qwen_s", "claude_s", "chatgpt_s", "eleven_s", "heygen_s"]
-for c in chaves_estado:
-    if c not in st.session_state:
-        st.session_state[c] = ""
+# ==============================================================================
+# PAINEL CENTRAL DE ENTRADA DIRETA (Força o envio imediato da chave)
+# ==============================================================================
+st.subheader("🔑 Ativação Direta do Enxame")
+st.write("Cole a sua chave da Groq (a que começa com gsk_...) no campo abaixo para ligar a máquina de graça:")
 
-# Painel Lateral de Credenciais
-st.sidebar.header("🔑 Banco de Energia Suprema")
-input_gemini = st.sidebar.text_area("1) Google Gemini Keys", value=st.session_state.gemini_s)
-input_groq = st.sidebar.text_area("2) Groq (Llama) Keys", value=st.session_state.groq_s)
-input_mistral = st.sidebar.text_area("3) Mistral AI Keys", value=st.session_state.mistral_s)
-input_cohere = st.sidebar.text_area("4) Cohere Keys", value=st.session_state.cohere_s)
-input_hf = st.sidebar.text_area("5) Hugging Face Tokens", value=st.session_state.hf_s)
-input_qwen = st.sidebar.text_area("6) Qwen (Alibaba) Keys", value=st.session_state.qwen_s)
-input_claude = st.sidebar.text_area("7) Claude (Anthropic) Keys", value=st.session_state.claude_s)
-input_chatgpt = st.sidebar.text_area("8) ChatGPT (OpenAI) Keys", value=st.session_state.chatgpt_s)
+groq_key_direta = st.text_input("Sua Groq API Key Ativa:", type="password")
 
-st.sidebar.markdown("---")
-input_eleven = st.sidebar.text_input("9) ElevenLabs API Key", value=st.session_state.eleven_s, type="password")
-input_heygen = st.sidebar.text_input("10) HeyGen API Key", value=st.session_state.heygen_s, type="password")
-
-# Salva na sessão
-st.session_state.gemini_s = input_gemini
-st.session_state.groq_s = input_groq
-st.session_state.mistral_s = input_mistral
-st.session_state.cohere_s = input_cohere
-st.session_state.hf_s = input_hf
-st.session_state.qwen_s = input_qwen
-st.session_state.claude_s = input_claude
-st.session_state.chatgpt_s = input_chatgpt
-st.session_state.eleven_s = input_eleven
-st.session_state.heygen_s = input_heygen
-
-# Listas limpas de chaves
-lista_gemini = [k.strip() for k in input_gemini.split(",") if k.strip()]
-lista_groq = [k.strip() for k in input_groq.split(",") if k.strip()]
-lista_mistral = [k.strip() for k in input_mistral.split(",") if k.strip()]
-lista_cohere = [k.strip() for k in input_cohere.split(",") if k.strip()]
-lista_hf = [k.strip() for k in input_hf.split(",") if k.strip()]
-lista_qwen = [k.strip() for k in input_qwen.split(",") if k.strip()]
-lista_claude = [k.strip() for k in input_claude.split(",") if k.strip()]
-lista_chatgpt = [k.strip() for k in input_chatgpt.split(",") if k.strip()]
-
-# Monitor de Carga das Chaves na Lateral
-st.sidebar.markdown("---")
-st.sidebar.subheader("📊 Canais Prontos")
-st.sidebar.info(f"Gemini: {len(lista_gemini)} | Groq: {len(lista_groq)} | Mistral: {len(lista_mistral)} \nCohere: {len(lista_cohere)} | HF: {len(lista_hf)} | Qwen: {len(lista_qwen)} \nClaude: {len(lista_claude)} | ChatGPT: {len(lista_chatgpt)}")
-
-# Abas do sistema
 aba_gerador, aba_vendas, aba_fisica = st.tabs(["🧠 Laboratório Generativo", "🏪 Máquina de Vendas", "🔌 Engenharia Maker Física"])
 
 def criar_pdf_comercial(titulo, conteudo):
@@ -88,103 +47,20 @@ def criar_pdf_comercial(titulo, conteudo):
     pdf.multi_cell(0, 10, txt=conteudo.encode('utf-8', 'ignore').decode('utf-8'))
     return pdf.output()
 
-# ==============================================================================
-# FUNÇÕES DE EXECUÇÃO ISOLADAS (TELEMETRIA E PROTEÇÃO DE SINTAXE)
-# ==============================================================================
-def chamar_gemini(chave, prompt):
-    t_inicio = time.time()
-    try:
-        client = genai.Client(api_key=chave)
-        res = client.models.generate_content(model='gemini-2.5-flash', contents=prompt).text
-        return res, f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: 
-        return "", f"Erro: {str(e)}"
-
-def chamar_groq(chave, prompt):
-    t_inicio = time.time()
-    try:
-        client_groq = Groq(api_key=chave)
-        res = client_groq.chat.completions.create(messages=[{"role": "user", "content": prompt}], model="llama-3.1-8b-instant").choices.message.content
-        return res, f"Sucesso in {time.time() - t_inicio:.2f}s"
-    except Exception as e: 
-        return "", f"Erro: {str(e)}"
-
-def chamar_mistral(chave, prompt):
-    t_inicio = time.time()
-    try:
-        headers = {"Authorization": f"Bearer {chave}", "Content-Type": "application/json"}
-        payload = {"model": "mistral-tiny", "messages": [{"role": "user", "content": prompt}]}
-        res = requests.post("https://mistral.ai", json=payload, headers=headers, timeout=10).json()
-        return res["choices"]["message"]["content"], f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: 
-        return "", f"Erro: {str(e)}"
-
-def chamar_cohere(chave, prompt):
-    t_inicio = time.time()
-    try:
-        headers = {"Authorization": f"Bearer {chave}", "Content-Type": "application/json"}
-        payload = {"model": "command-r-plus", "message": prompt}
-        res = requests.post("https://cohere.com", json=payload, headers=headers, timeout=10).json()
-        return res["text"], f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: 
-        return "", f"Erro: {str(e)}"
-
-def chamar_huggingface(token, prompt):
-    t_inicio = time.time()
-    try:
-        headers = {"Authorization": f"Bearer {token}"}
-        payload = {"inputs": prompt}
-        res = requests.post("https://huggingface.co", json=payload, headers=headers, timeout=10).json()
-        txt = res.get("generated_text", "") if isinstance(res, list) else res.get("generated_text", "")
-        return txt, f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: 
-        return "", f"Erro: {str(e)}"
-
-def chamar_qwen(chave, prompt):
-    t_inicio = time.time()
-    try:
-        headers = {"Authorization": f"Bearer {chave}", "Content-Type": "application/json"}
-        payload = {"model": "qwen/qwen-2.5-72b-instruct", "messages": [{"role": "user", "content": prompt}]}
-        res = requests.post("https://openrouter.ai", json=payload, headers=headers, timeout=10).json()
-        return res["choices"]["message"]["content"], f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: 
-        return "", f"Erro: {str(e)}"
-
-def chamar_claude(chave, prompt):
-    t_inicio = time.time()
-    try:
-        headers = {"x-api-key": chave, "anthropic-version": "2023-06-01", "content-type": "application/json"}
-        payload = {"model": "claude-3-haiku-20240307", "max_tokens": 1000, "messages": [{"role": "user", "content": prompt}]}
-        res = requests.post("https://anthropic.com", json=payload, headers=headers, timeout=10).json()
-        return res["content"]["text"], f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: 
-        return "", f"Erro: {str(e)}"
-
-def chamar_chatgpt(chave, prompt):
-    t_inicio = time.time()
-    try:
-        headers = {"Authorization": f"Bearer {chave}", "Content-Type": "application/json"}
-        payload = {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": prompt}]}
-        res = requests.post("https://openai.com", json=payload, headers=headers, timeout=10).json()
-        return res["choices"]["message"]["content"], f"Sucesso em {time.time() - t_inicio:.2f}s"
-    except Exception as e: 
-        return "", f"Erro: {str(e)}"
-
 # ------------------------------------------------------------------------------
-# ABA 1: EXECUÇÃO DO LABORATÓRIO (FLUXO TOTALMENTE PLANO CORRIGIDO)
+# ABA 1: EXECUÇÃO DO LABORATÓRIO (DIRETO PELA CHAVE DIGITADA)
 # ------------------------------------------------------------------------------
 with aba_gerador:
-    st.subheader("⚙️ Painel de Ação e Diagnóstico de Rede")
+    box_telemetria = st.code("📡 Inicializando rastreador de sinal... Ready.")
     
-    if st.button("🚀 DISPARAR ENXAME CIBERNÉTICO", use_container_width=True):
-        chaves_existentes = any([lista_gemini, lista_groq, lista_mistral, lista_cohere, lista_hf, lista_qwen, lista_claude, lista_chatgpt])
-        if not chaves_existentes:
-            st.error("❌ Alerta de Sistema: Banco de energia vazio. Preencha as chaves à esquerda.")
+    if st.button("🚀 DISPARAR ENXAME CIBERNÉTICO AGORA", use_container_width=True):
+        if not groq_key_direta:
+            st.error("❌ Alerta de Sistema: Insira a sua Groq API Key no campo do topo antes de clicar.")
         else:
             texto_completo = ""
             nome_produto = "Dispositivo Desconhecido"
             
-            box_telemetria = st.code("📡 Inicializando rastreador de sinal... Ready.")
+            box_telemetria.code("📡 Roteando dados para Canal Reserva [Groq Llama]...")
             
             historico_total = "Nenhuma invenção criada ainda."
             if os.path.exists(ARQUIVO_BANCO):
@@ -193,6 +69,86 @@ with aba_gerador:
                     if not df_h.empty:
                         col = "Invenção" if "Invenção" in df_h.columns else "Produto Identificado"
                         historico_total = ", ".join(df_h[col].astype(str).tolist())
-                except: 
-                    pass
+                except: pass
 
+            prompt_sistema = f"Tempo: {time.time()}. Histórico: [{historico_total}]. Projete um dispositivo novo focado em ENERGIA AUTOSSUSTENTÁVEL ou CIBERNÉTICA. Na PRIMEIRA LINHA responda apenas: 'NOME: [Nome]'."
+
+            # Executa direto no motor da Groq oficial sem passar por menus laterais
+            try:
+                t_inicio = time.time()
+                client_groq = Groq(api_key=groq_key_direta.strip())
+                texto_completo = client_groq.chat.completions.create(
+                    messages=[{"role": "user", "content": prompt_sistema}], 
+                    model="llama-3.1-8b-instant"
+                ).choices.message.content
+                box_telemetria.code(f"📡 Canal Groq: Sucesso em {time.time() - t_inicio:.2f}s")
+            except Exception as e:
+                box_telemetria.code(f"📡 Canal Groq Falhou -> Erro: {str(e)}")
+
+            if texto_completo:
+                if "NOME:" in texto_completo:
+                    for linha in texto_completo.split("\n"):
+                        if linha.startswith("NOME:"):
+                            nome_produto = linha.replace("NOME:", "").strip()
+                            break
+                
+                # Gravação na planilha
+                data_atual = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                nova_linha = pd.DataFrame([{"Data/Hora": data_atual, "Invenção": nome_produto, "Projeto de Engenharia": texto_completo}])
+                if os.path.exists(ARQUIVO_BANCO):
+                    try: df_final = pd.concat([pd.read_csv(ARQUIVO_BANCO), nova_linha], ignore_index=True)
+                    except: df_final = nova_linha
+                else: df_final = nova_linha
+                df_final.to_csv(ARQUIVO_BANCO, index=False)
+                
+                st.success(f"🔥 Sincronização Concluída: '{nome_produto}' registrado na rede.")
+                st.write(texto_completo)
+                st.balloons()
+            else:
+                st.error("🚨 FALHA CRÍTICA: A chave digitada acima foi recusada pelo servidor da Groq. Verifique se o código gsk_ foi copiado por inteiro.")
+
+# ------------------------------------------------------------------------------
+# ABAS 2 E 3
+# ------------------------------------------------------------------------------
+with aba_vendas:
+    st.subheader("🏪 Estrutura Comercial de Alta Conversão")
+    if os.path.exists(ARQUIVO_BANCO):
+        try:
+            df_v = pd.read_csv(ARQUIVO_BANCO)
+            if not df_v.empty:
+                ultima_inv = df_v.iloc[-1]
+                nome_inv = str(ultima_inv.get("Invenção", "AetherFlux Generator"))
+                st.write(f"Landing Page Automática estruturada para: **{nome_inv}**")
+                st.markdown(f"""
+                <div style="background-color: #1a1c29; padding: 25px; border-radius: 10px; border: 2px solid #00ff66; text-align: center;">
+                    <h1 style="color: #00ff66 !important;">{nome_inv.upper()}</h1>
+                    <p style="color: #ffffff; font-size: 18px;">A Revolução Definitiva em Energia Livre e Autossustentável</p>
+                    <div style="background-color: #0d0e15; padding: 15px; border-radius: 5px; color: #8a2be2; margin: 15px 0; font-weight: bold;">
+                        ⚡ COMPRE O BLUEPRINT COMPLETO DA TECNOLOGIA E ASSUMA O CONTROLE AGORA!
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+        except: pass
+
+with aba_fisica:
+    st.subheader("🔌 Central de Comando Residencial")
+    col1, col2 = st.columns(2)
+    with col1:
+        lampada = st.toggle("💡 Lâmpada do Laboratório Quântico")
+        if lampada: st.success("🟢 Comando enviado via Nuvem: LIGADO!")
+    with col2:
+        rele_motor = st.toggle("⚡ Alimentação Principal do Gerador")
+        if rele_motor: st.success("🟢 Comando enviado para o Relé físico: ATIVADO!")
+
+st.markdown("---")
+st.subheader("📋 Banco de Dados de Patentes Cumulativas")
+if os.path.exists(ARQUIVO_BANCO):
+    try:
+        df_visualizacao = pd.read_csv(ARQUIVO_BANCO)
+        st.metric(label="Patentes Salvas na Memória", value=len(df_visualizacao))
+        st.dataframe(df_visualizacao)
+        if not df_visualizacao.empty:
+            ultima_inv = df_visualizacao.iloc[-1]
+            pdf_bytes = criar_pdf_comercial(str(ultima_inv["Invenção"]), str(ultima_inv["Projeto de Engenharia"]))
+            st.download_button(label="📄 BAIXAR RELATÓRIO DA ÚLTIMA INVENÇÃO EM PDF", data=pdf_bytes, file_name="patente.pdf", mime="application/pdf")
+    except: pass
