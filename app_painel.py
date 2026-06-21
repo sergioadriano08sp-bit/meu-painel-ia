@@ -11,7 +11,7 @@ from groq import Groq
 # ==============================================================================
 # ESTILIZAÇÃO MODO ESCURO / CYBERPUNK
 # ==============================================================================
-st.set_page_config(page_title="Império Cibernético v12.0", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Império Cibernético v12.1", page_icon="⚡", layout="centered")
 
 st.markdown("""
     <style>
@@ -24,8 +24,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚡ IMPÉRIO CIBERNÉTICO V12.0")
-st.write("Central Suprema: 10 Caixas Ativas e Faturamento Automático via Pix.")
+st.title("⚡ IMPÉRIO CIBERNÉTICO V12.1")
+st.write("Central Suprema: Correção de Variável Pix Concluída com Sucesso.")
 
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
@@ -38,7 +38,7 @@ for c in chaves_estado:
         st.session_state[c] = ""
 
 # ==============================================================================
-# PAINEL LATERAL DE CREDENCIAIS MONUMENTAL (RESTADO COMO ANTES)
+# PAINEL LATERAL DE CREDENCIAIS MONUMENTAL (10 ESPAÇOS CONSOLIDADOS)
 # ==============================================================================
 st.sidebar.header("🔑 Banco de Energia Suprema")
 st.sidebar.write("Cole os códigos correspondentes. Separe múltiplas chaves por vírgula.")
@@ -59,7 +59,8 @@ input_heygen = st.sidebar.text_input("10) HeyGen API Key", value=st.session_stat
 
 st.sidebar.markdown("---")
 st.sidebar.header("💰 Configuração de Faturamento")
-input_pix = st.sidebar.text_input("Sua Chave Pix (E-mail, CPF ou Telefone)", value=st.session_state.min_chave_pix)
+# Correção do typo: mudado de min_chave_pix para minha_chave_pix para alinhar com o estado criado
+input_pix = st.sidebar.text_input("Sua Chave Pix (E-mail, CPF ou Telefone)", value=st.session_state.minha_chave_pix)
 
 # Atualiza a memória de sessão para manter os dados salvos na tela
 st.session_state.gemini_s = input_gemini
@@ -72,7 +73,7 @@ st.session_state.claude_s = input_claude
 st.session_state.chatgpt_s = input_chatgpt
 st.session_state.eleven_s = input_eleven
 st.session_state.heygen_s = input_heygen
-st.session_state.min_chave_pix = input_pix
+st.session_state.minha_chave_pix = input_pix
 
 # Separação limpa de chaves
 lista_gemini = [k.strip() for k in input_gemini.split(",") if k.strip()]
@@ -181,6 +182,3 @@ with aba_gerador:
     if st.button("🚀 DISPARAR ENXAME CIBERNÉTICO", use_container_width=True):
         chaves_existentes = any([lista_gemini, lista_groq, lista_mistral, lista_cohere, lista_hf, lista_qwen, lista_claude, lista_chatgpt])
         if not chaves_existentes:
-            st.error("❌ Erro: Insira pelo menos uma chave de inteligência artificial na barra lateral.")
-        else:
-            texto_completo = ""
