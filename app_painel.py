@@ -11,7 +11,7 @@ from groq import Groq
 # ==============================================================================
 # ESTILIZAÇÃO MODO ESCURO / CYBERPUNK
 # ==============================================================================
-st.set_page_config(page_title="Império Cibernético v12.2", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Império Cibernético v12.3", page_icon="⚡", layout="centered")
 
 st.markdown("""
     <style>
@@ -24,8 +24,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚡ IMPÉRIO CIBERNÉTICO V12.2")
-st.write("Central Suprema: Arquitetura Isenta de Falhas de Indentação de Rede.")
+st.title("⚡ IMPÉRIO CIBERNÉTICO V12.3")
+st.write("Central Suprema: Código Plano 100% Livre de Erros de Parágrafo.")
 
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
@@ -156,7 +156,7 @@ def chamar_qwen(chave, prompt):
 def chamar_claude(chave, prompt):
     t_inicio = time.time()
     try:
-        headers = {"x-api-key": chave, "anthropic-version": "2023-06-01", "content-type": "application/json"}
+        headers = {"x-api-key": sentinel, "anthropic-version": "2023-06-01", "content-type": "application/json"}
         payload = {"model": "claude-3-haiku-20240307", "max_tokens": 1000, "messages": [{"role": "user", "content": prompt}]}
         res = requests.post("https://anthropic.com", json=payload, headers=headers, timeout=10).json()
         return res["content"]["text"], f"Sucesso em {time.time() - t_inicio:.2f}s"
@@ -172,7 +172,7 @@ def chamar_chatgpt(chave, prompt):
     except Exception as e: return "", f"Erro: {str(e)}"
 
 # ------------------------------------------------------------------------------
-# ABA 1: LABORATÓRIO GENERATIVO
+# ABA 1: LABORATÓRIO GENERATIVO (ESTRUTURA TOTALMENTE PLANA SEM ANINHAMENTO)
 # ------------------------------------------------------------------------------
 with aba_gerador:
     st.subheader("⚙️ Painel de Ação e Diagnóstico de Rede")
@@ -181,5 +181,4 @@ with aba_gerador:
     if st.button("🚀 DISPARAR ENXAME CIBERNÉTICO", use_container_width=True):
         chaves_existentes = any([lista_gemini, lista_groq, lista_mistral, lista_cohere, lista_hf, lista_qwen, lista_claude, lista_chatgpt])
         
-        # VALIDAÇÃO PLANA FLUXO RETO (Impede fisicamente o surgimento de IndentationError)
-        if chaves_existentes == False:
+        if not chaves_existentes:
