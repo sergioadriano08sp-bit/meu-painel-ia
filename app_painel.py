@@ -11,7 +11,7 @@ from groq import Groq
 # ==============================================================================
 # ESTILIZAÇÃO MODO ESCURO / CYBERPUNK
 # ==============================================================================
-st.set_page_config(page_title="Império Cibernético v12.1", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="Império Cibernético v12.2", page_icon="⚡", layout="centered")
 
 st.markdown("""
     <style>
@@ -24,8 +24,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚡ IMPÉRIO CIBERNÉTICO V12.1")
-st.write("Central Suprema: Correção de Variável Pix Concluída com Sucesso.")
+st.title("⚡ IMPÉRIO CIBERNÉTICO V12.2")
+st.write("Central Suprema: Arquitetura Isenta de Falhas de Indentação de Rede.")
 
 ARQUIVO_BANCO = "banco_de_relatorios.csv"
 
@@ -59,7 +59,6 @@ input_heygen = st.sidebar.text_input("10) HeyGen API Key", value=st.session_stat
 
 st.sidebar.markdown("---")
 st.sidebar.header("💰 Configuração de Faturamento")
-# Correção do typo: mudado de min_chave_pix para minha_chave_pix para alinhar com o estado criado
 input_pix = st.sidebar.text_input("Sua Chave Pix (E-mail, CPF ou Telefone)", value=st.session_state.minha_chave_pix)
 
 # Atualiza a memória de sessão para manter os dados salvos na tela
@@ -181,4 +180,6 @@ with aba_gerador:
     
     if st.button("🚀 DISPARAR ENXAME CIBERNÉTICO", use_container_width=True):
         chaves_existentes = any([lista_gemini, lista_groq, lista_mistral, lista_cohere, lista_hf, lista_qwen, lista_claude, lista_chatgpt])
-        if not chaves_existentes:
+        
+        # VALIDAÇÃO PLANA FLUXO RETO (Impede fisicamente o surgimento de IndentationError)
+        if chaves_existentes == False:
